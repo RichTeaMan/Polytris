@@ -7,6 +7,87 @@ var gridSquareLength = 40;
 var logicTicks = 20;
 var currentTick = 0;
 
+function createPolyominoes(n) {
+
+    // create origin point
+    var polys = [[{ "x" : 0, "y": 0}]];
+
+    for (var i = 1; i < n; i++) {
+
+        polys = expandPolys(polys);
+    }
+    return polys;
+}
+
+function expandPolys(startPolys) {
+
+    var resultPolys = new Set();
+
+    // iterate through all polys
+    for (var p = 0; p < startPolys.length; p++) {
+        var poly = startPolys[p];
+
+        var polyHash = getHashPolyomino(poly);
+
+        // iterate through all blocks in poly
+        for (var i = 0; i < poly.length; i++) {
+
+            // add a block in all cardinalities
+            // left
+            var leftCpoly = Array.from(poly);
+            var leftNewBlock = { "x": poly[i].x + 1, "y": poly[i].y };
+            leftCpoly.push(leftNewBlock);
+            if (getHashPolyomino(leftCpoly) != polyHash) {
+                resultPolys.add(leftCpoly);
+            }
+
+            // up
+            var upCpoly = Array.from(poly);
+            var upNewBlock = { "x": poly[i].x, "y": poly[i].y + 1 };
+            upCpoly.push(upNewBlock);
+            if (getHashPolyomino(upCpoly) != polyHash) {
+                resultPolys.add(upCpoly);
+            }
+
+            // right
+            var rightCpoly = Array.from(poly);
+            var rightNewBlock = { "x": poly[i].x - 1, "y": poly[i].y };
+            rightCpoly.push(rightNewBlock);
+            if (getHashPolyomino(rightCpoly) != polyHash) {
+                resultPolys.add(rightCpoly);
+            }
+
+            // down
+            var downCpoly = Array.from(poly);
+            var downNewBlock = { "x": poly[i].x, "y": poly[i].y - 1 };
+            downCpoly.push(downNewBlock);
+            if (getHashPolyomino(downCpoly) != polyHash) {
+                resultPolys.add(downCpoly);
+            }
+
+            for (var r = 0; r < resultPolys.length; r++) {
+                for (var b = 0; b < resultPolys[r].length; b++) {
+                    var block = resultPolys[r][b];
+                    if (block.x > 10) {
+                        console.log("wtf");
+                    }
+                }
+            }
+        }
+    }
+
+    return Array.from(resultPolys);
+}
+
+function getHashPolyomino(poly) {
+    var blockHashes = new Set();
+    for (var i = 0; i < poly.length; i++) {
+        var polyHash = JSON.stringify(poly[i]);
+        blockHashes.add(polyHash);
+    }
+    return JSON.stringify(Array.from(blockHashes));
+}
+
 function createGrid() {
     var gameGrid = new Array(gridWidth);
     for (var i = 0; i < gridWidth; i++) {
@@ -18,10 +99,29 @@ function createGrid() {
     return gameGrid;
 }
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
 var gameGrid = createGrid();
 
+var pieces = createPolyominoes(4);
+
 function spawnPiece() {
-    currentPiece = [{ "x": 5, "y": 0 }];
+    var pieceId = getRandomInt(0, pieces.length);
+    var piece = Array.from(pieces[pieceId]);
+    for (var i = 0; i < piece.length; i++) {
+        var block = piece[i];
+        block.x += 5;
+    }
+    currentPiece = piece;
+
+    var blockHashElement = document.getElementById("blockHash");
+    if (blockHashElement) {
+        blockHashElement.innerText = JSON.stringify(currentPiece);
+    }
 }
 
 function render() {
@@ -46,25 +146,30 @@ function render() {
     }
 }
 
+// return true if move was possible, other false.
+function moveCurrentPiece(xMod, yMod) {
+
+    var canMovePiece = true;
+    for (var i = 0; i < currentPiece.length; i++) {
+        if (currentPiece[i].y + yMod == gridHeight || gameGrid[currentPiece[i].x + xMod][currentPiece[i].y + yMod] != 0) {
+            canMovePiece = false;
+        }
+    }
+
+    if (canMovePiece) {
+        for (var i = 0; i < currentPiece.length; i++) {
+            currentPiece[i].y += yMod;
+            currentPiece[i].x += xMod;
+        }
+    }
+    return canMovePiece;
+}
+
 function tick() {
 
     if (currentTick % logicTicks == 0) {
 
-        var canDropPiece = true;
-        for (var i = 0; i < currentPiece.length; i++) {
-            if (currentPiece[i].y + 1 == gridHeight || gameGrid[currentPiece[i].x][currentPiece[i].y + 1] != 0) {
-                canDropPiece = false;
-            }
-        }
-
-        if (canDropPiece) {
-            for (var i = 0; i < currentPiece.length; i++) {
-                currentPiece[i].y++;
-            }
-        } else {
-            for (var i = 0; i < currentPiece.length; i++) {
-                gameGrid[currentPiece[i].x][currentPiece[i].y] = 1;
-            }
+        if (!moveCurrentPiece(0, 1)) {
 
             checkLines();
             spawnPiece();
@@ -108,7 +213,6 @@ window.onkeydown = function (e) {
     down = 40
     var xMod = 0;
     var yMod = 0;
-    var canMovePiece = true;
 
     // up
     if (key == 38) {
@@ -127,18 +231,7 @@ window.onkeydown = function (e) {
         xMod++;
     }
 
-    for (var i = 0; i < currentPiece.length; i++) {
-        if (currentPiece[i].y + yMod == gridHeight || gameGrid[currentPiece[i].x + xMod][currentPiece[i].y + yMod] != 0) {
-            canMovePiece = false;
-        }
-    }
-
-    if (canMovePiece) {
-        for (var i = 0; i < currentPiece.length; i++) {
-            currentPiece[i].y += yMod;
-            currentPiece[i].x += xMod;
-        }
-    }
+    moveCurrentPiece(xMod, yMod);
 }
 
 
