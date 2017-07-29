@@ -7,20 +7,22 @@ var gridSquareLength = 40;
 var logicTicks = 20;
 var currentTick = 0;
 
-var gameGrid = new Array(gridWidth);
-for (var i = 0; i < gridWidth; i++) {
-    gameGrid[i] = new Array(gridHeight);
-    for (var j = 0; j < gridHeight; j++) {
-        gameGrid[i][j] = 0;
+function createGrid() {
+    var gameGrid = new Array(gridWidth);
+    for (var i = 0; i < gridWidth; i++) {
+        gameGrid[i] = new Array(gridHeight);
+        for (var j = 0; j < gridHeight; j++) {
+            gameGrid[i][j] = 0;
+        }
     }
+    return gameGrid;
 }
 
+var gameGrid = createGrid();
 
 function spawnPiece() {
     currentPiece = [{ "x": 5, "y": 0 }];
 }
-
-
 
 function render() {
 
@@ -63,12 +65,38 @@ function tick() {
             for (var i = 0; i < currentPiece.length; i++) {
                 gameGrid[currentPiece[i].x][currentPiece[i].y] = 1;
             }
+
+            checkLines();
             spawnPiece();
         }
     }
 
     render();
     currentTick++;
+}
+
+function checkLines() {
+
+    var addedLineCount = gridHeight - 1;
+    var newGameGrid = createGrid();
+    for (var j = gridHeight - 1; j >= 0; j--) {
+
+        var clearLine = true;
+        for (var i = 0; i < gridWidth; i++) {
+            if (gameGrid[i][j] == 0) {
+                clearLine = false;
+                break;
+            }
+
+        }
+        if (!clearLine) {
+            for (var i = 0; i < gridWidth; i++) {
+                newGameGrid[i][addedLineCount] = gameGrid[i][j];
+            }
+            addedLineCount--;
+        }
+    }
+    gameGrid = newGameGrid;
 }
 
 window.onkeydown = function (e) {
