@@ -244,6 +244,27 @@ function checkLines() {
     gameGrid = newGameGrid;
 }
 
+function rotateClockwise (poly) {
+
+    // rotate about the first block
+    for (var i = 1; i < poly.length; i++) {
+        var x = poly[i].x - poly[0].x;
+        var y = poly[i].y - poly[0].y;
+        poly[i].x = -y + poly[0].x;
+        poly[i].y = x + poly[0].y;
+    }
+}
+
+function rotateAntiClockwise (poly) {
+
+    for (var i = 1; i < poly.length; i++) {
+        var x = poly[i].x - poly[0].x;
+        var y = poly[i].y - poly[0].y;
+        poly[i].x = y + poly[0].x;
+        poly[i].y = -x + poly[0].y;
+    }
+}
+
 window.onkeydown = function (e) {
     var key = e.keyCode ? e.keyCode : e.which;
 
@@ -270,7 +291,14 @@ window.onkeydown = function (e) {
     else if (key == 39) {
         xMod++;
     }
-
+    // X
+    else if (key == 88) {
+        rotateClockwise(currentPiece);
+    }
+    // Z
+    else if (key == 90) {
+        rotateAntiClockwise(currentPiece);
+    }
     moveCurrentPiece(xMod, yMod);
 }
 
