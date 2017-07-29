@@ -7,6 +7,16 @@ var gridSquareLength = 40;
 var logicTicks = 20;
 var currentTick = 0;
 
+function clonePoly(poly) {
+    // ensure current piece is deeply cloned
+    var clone = new Array(poly.length);
+    for (var i = 0; i < poly.length; i++) {
+        var block = { "x": poly[i].x, "y": poly[i].y };
+        clone[i] = block;
+    }
+    return clone;
+}
+
 function createPolyominoes(n) {
 
     // create origin point
@@ -16,7 +26,40 @@ function createPolyominoes(n) {
 
         polys = expandPolys(polys);
     }
-    return polys;
+
+    var hashPolys = new Set();
+    var resultPolys = new Array();
+    for (var i = 0; i < polys.length; i++) {
+        var poly = clonePoly(polys[i]);
+        normalisePoly(poly);
+        var hash = getHashPolyomino(poly);
+        if (!hashPolys.has(hash)) {
+            hashPolys.add(hash);
+            resultPolys.push(poly);
+        }
+    }
+    return resultPolys;
+}
+
+function normalisePoly(poly) {
+    // find most negative x and y
+    var negX = 0;
+    var negY = 0;
+    for (var i = 0; i < poly.length; i++) {
+        if (poly[i].x < negX) {
+            negX = poly[i].x;
+        }
+        if (poly[i].y < negY) {
+            negY = poly[i].y;
+        }
+    }
+
+    // add mod back to blocks
+    for (var i = 0; i < poly.length; i++) {
+
+        poly[i].x += Math.abs(negX);
+        poly[i].y += Math.abs(negY);
+    }
 }
 
 function expandPolys(startPolys) {
@@ -64,15 +107,6 @@ function expandPolys(startPolys) {
             if (getHashPolyomino(downCpoly) != polyHash) {
                 resultPolys.add(downCpoly);
             }
-
-            for (var r = 0; r < resultPolys.length; r++) {
-                for (var b = 0; b < resultPolys[r].length; b++) {
-                    var block = resultPolys[r][b];
-                    if (block.x > 10) {
-                        console.log("wtf");
-                    }
-                }
-            }
         }
     }
 
@@ -111,12 +145,14 @@ var pieces = createPolyominoes(4);
 
 function spawnPiece() {
     var pieceId = getRandomInt(0, pieces.length);
-    var piece = Array.from(pieces[pieceId]);
+    var piece = pieces[pieceId];
+
+    // ensure current piece is deeply cloned
+    currentPiece = new Array(piece.length);
     for (var i = 0; i < piece.length; i++) {
-        var block = piece[i];
-        block.x += 5;
+        var block = { "x": piece[i].x + 5, "y": piece[i].y };
+        currentPiece[i] = block;
     }
-    currentPiece = piece;
 
     var blockHashElement = document.getElementById("blockHash");
     if (blockHashElement) {
@@ -170,6 +206,10 @@ function tick() {
     if (currentTick % logicTicks == 0) {
 
         if (!moveCurrentPiece(0, 1)) {
+
+            for (var i = 0; i < currentPiece.length; i++) {
+                gameGrid[currentPiece[i].x][currentPiece[i].y] = 1;
+            }
 
             checkLines();
             spawnPiece();
