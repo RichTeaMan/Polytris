@@ -355,14 +355,21 @@ window.onkeydown = function (e) {
     moveCurrentPiece(xMod, yMod);
 }
 
+function startGame() {
+    mainGtx = document.getElementById("gtx").getContext("2d");
+    previewGtx = document.getElementById("preview_gtx").getContext("2d");
+    currentPiece = spawnPiece();
+    moveCurrentPiece(gridWidth / 2, 0);
+    nextPiece = spawnPiece();
+    setInterval(tick, 50);
+}
+
+
 var gameGrid = createGrid(gridWidth, gridHeight);
 
 var pieces = createPolyominoes(polySize);
 
-var mainGtx = document.getElementById("gtx").getContext("2d");
-var previewGtx = document.getElementById("preview_gtx").getContext("2d");
-var currentPiece = spawnPiece();
-moveCurrentPiece(gridWidth / 2, 0);
-var nextPiece = spawnPiece();
-
-setInterval(tick, 50);
+var mainGtx;
+var previewGtx;
+var currentPiece;
+var nextPiece;

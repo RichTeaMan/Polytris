@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    <title>Polytris</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <h1>Polytris</h1>
+    <div id="previews">
+    </div>
+    <script src="game.js"></script>
+    <script>
+        var previewElement = document.getElementById("previews");
+    for (var i = 0; i < pieces.length; i++) {
+        previewElement.innerHTML += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas></div>`;
+    }
+    for (var i = 0; i < pieces.length; i++) {
+        var previewGtx = document.getElementById(`preview_gtx_${i}`).getContext("2d");
+        render(previewGtx, createGrid(polySize, polySize), pieces[i]);
+    }
+    </script>
+</body>
+
+</html>
