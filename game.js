@@ -1,6 +1,7 @@
 
 var gridWidth = 10;
 var gridHeight = 14;
+var polySize = 4;
 
 var gridSquareLength = 40;
 
@@ -133,15 +134,17 @@ function createGrid() {
     return gameGrid;
 }
 
+/**
+ * Gets an integer between the given values. Maximum is exclusive and the minimum is inclusive.
+ * @argument min {number} Minimum number.
+ * @argument max {number} Maximum number.
+ * @returns {number}
+ */
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+  return Math.floor(Math.random() * (max - min)) + min;
 }
-
-var gameGrid = createGrid();
-
-var pieces = createPolyominoes(4);
 
 function spawnPiece() {
     var pieceId = getRandomInt(0, pieces.length);
@@ -182,7 +185,13 @@ function render() {
     }
 }
 
-// return true if move was possible, other false.
+/**
+ * Return true if move was possible, other false.
+ * 
+ * @argument xMod {number} Change in x position.
+ * @argument yMod {number} Change in y position.
+ * @returns {boolean}
+ */
 function moveCurrentPiece(xMod, yMod) {
 
     var canMovePiece = true;
@@ -302,6 +311,9 @@ window.onkeydown = function (e) {
     moveCurrentPiece(xMod, yMod);
 }
 
+var gameGrid = createGrid();
+
+var pieces = createPolyominoes(polySize);
 
 var currentPiece = [];
 var gtx = document.getElementById("gtx").getContext("2d");
