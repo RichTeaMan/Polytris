@@ -6,13 +6,20 @@
 </head>
 
 <body>
+    <h1>Polytris</h1>
     <div id="blockHash"></div>
     <div class="game_container main_container">
         <canvas id="gtx" width="400" height="560"></canvas>
     </div>
-    <div class="game_container preview_container">
-        <div>Preview Pane</div>
-        <canvas id="preview_gtx" width="160" height="160"></canvas>
+    <div class="info_container">
+        <div>
+            <span>Lines: </span>
+            <span id="lines_cleared" />
+        </div>
+        <div class="game_container preview_container">
+            <div>Preview Pane</div>
+            <canvas id="preview_gtx" width="160" height="160"></canvas>
+        </div>
     </div>
     <script src="game.js"></script>
 </body>

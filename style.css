@@ -1,4 +1,12 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
 .game_container {
     border: 2px solid black;
     display: inline-block;
+}
+.info_container {
+    border: 2px solid black;
+    display: inline-block;
+    padding: 2px;
 }
