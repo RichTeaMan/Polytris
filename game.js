@@ -151,26 +151,30 @@ function spawnPiece() {
     var piece = pieces[pieceId];
 
     // ensure current piece is deeply cloned
-    currentPiece = new Array(piece.length);
+    var newPiece = new Array(piece.length);
     for (var i = 0; i < piece.length; i++) {
         var block = { "x": piece[i].x + 5, "y": piece[i].y };
-        currentPiece[i] = block;
+        newPiece[i] = block;
     }
-
-    var blockHashElement = document.getElementById("blockHash");
-    if (blockHashElement) {
-        blockHashElement.innerText = JSON.stringify(currentPiece);
-    }
+    return newPiece;
 }
 
-function render() {
+/**
+ * Renders the given grid on the given context with the given active piece.
+ * @param {*} gtx 
+ * @param {any[][]} grid 
+ * @param {any[]} activePiece
+ */
+function render(gtx, grid, activePiece) {
 
     gtx.fillStyle = "#FF0000";
     gtx.fillRect(0, 0, 800, 800);
+    var width = grid.length;
+    var height = grid[0].length;
 
-    for (var i = 0; i < gridWidth; i++) {
-        for (var j = 0; j < gridHeight; j++) {
-            if (gameGrid[i][j] == 0) {
+    for (var i = 0; i < width; i++) {
+        for (var j = 0; j < height; j++) {
+            if (grid[i][j] == 0) {
                 gtx.fillStyle = "#FFFFFF";
             } else {
                 gtx.fillStyle = "#0000FF";
@@ -181,7 +185,7 @@ function render() {
 
     gtx.fillStyle = "#0000FF";
     for (var i = 0; i < currentPiece.length; i++) {
-        gtx.fillRect(currentPiece[i].x * gridSquareLength, currentPiece[i].y * gridSquareLength, gridSquareLength, gridSquareLength);
+        gtx.fillRect(activePiece[i].x * gridSquareLength, activePiece[i].y * gridSquareLength, gridSquareLength, gridSquareLength);
     }
 }
 
@@ -221,11 +225,16 @@ function tick() {
             }
 
             checkLines();
-            spawnPiece();
+            currentPiece = spawnPiece();
+
+            var blockHashElement = document.getElementById("blockHash");
+            if (blockHashElement) {
+                blockHashElement.innerText = JSON.stringify(currentPiece);
+            }
         }
     }
 
-    render();
+    render(mainGtx, gameGrid, currentPiece);
     currentTick++;
 }
 
@@ -315,9 +324,8 @@ var gameGrid = createGrid();
 
 var pieces = createPolyominoes(polySize);
 
-var currentPiece = [];
-var gtx = document.getElementById("gtx").getContext("2d");
-
-spawnPiece();
+var mainGtx = document.getElementById("gtx").getContext("2d");
+var currentPiece = spawnPiece();
+var nextPiece = spawnPiece();
 
 setInterval(tick, 50);
