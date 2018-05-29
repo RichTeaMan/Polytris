@@ -123,11 +123,11 @@ function getHashPolyomino(poly) {
     return JSON.stringify(Array.from(blockHashes));
 }
 
-function createGrid() {
-    var gameGrid = new Array(gridWidth);
-    for (var i = 0; i < gridWidth; i++) {
-        gameGrid[i] = new Array(gridHeight);
-        for (var j = 0; j < gridHeight; j++) {
+function createGrid(width, height) {
+    var gameGrid = new Array(width);
+    for (var i = 0; i < width; i++) {
+        gameGrid[i] = new Array(height);
+        for (var j = 0; j < height; j++) {
             gameGrid[i][j] = 0;
         }
     }
@@ -153,7 +153,7 @@ function spawnPiece() {
     // ensure current piece is deeply cloned
     var newPiece = new Array(piece.length);
     for (var i = 0; i < piece.length; i++) {
-        var block = { "x": piece[i].x + 5, "y": piece[i].y };
+        var block = { "x": piece[i].x, "y": piece[i].y };
         newPiece[i] = block;
     }
     return newPiece;
@@ -184,7 +184,7 @@ function render(gtx, grid, activePiece) {
     }
 
     gtx.fillStyle = "#0000FF";
-    for (var i = 0; i < currentPiece.length; i++) {
+    for (var i = 0; i < activePiece.length; i++) {
         gtx.fillRect(activePiece[i].x * gridSquareLength, activePiece[i].y * gridSquareLength, gridSquareLength, gridSquareLength);
     }
 }
@@ -225,7 +225,10 @@ function tick() {
             }
 
             checkLines();
-            currentPiece = spawnPiece();
+            currentPiece = nextPiece;
+            // translate piece to middle of the grid
+            moveCurrentPiece(gridWidth / 2, 0);
+            nextPiece = spawnPiece();
 
             var blockHashElement = document.getElementById("blockHash");
             if (blockHashElement) {
@@ -235,13 +238,14 @@ function tick() {
     }
 
     render(mainGtx, gameGrid, currentPiece);
+    render(previewGtx, createGrid(polySize, polySize), nextPiece);
     currentTick++;
 }
 
 function checkLines() {
 
     var addedLineCount = gridHeight - 1;
-    var newGameGrid = createGrid();
+    var newGameGrid = createGrid(gridWidth, gridHeight);
     for (var j = gridHeight - 1; j >= 0; j--) {
 
         var clearLine = true;
@@ -320,12 +324,14 @@ window.onkeydown = function (e) {
     moveCurrentPiece(xMod, yMod);
 }
 
-var gameGrid = createGrid();
+var gameGrid = createGrid(gridWidth, gridHeight);
 
 var pieces = createPolyominoes(polySize);
 
 var mainGtx = document.getElementById("gtx").getContext("2d");
+var previewGtx = document.getElementById("preview_gtx").getContext("2d");
 var currentPiece = spawnPiece();
+moveCurrentPiece(gridWidth / 2, 0);
 var nextPiece = spawnPiece();
 
 setInterval(tick, 50);
