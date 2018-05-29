@@ -3,22 +3,40 @@
 <head>
     <title>Polytris</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="jquery-3.3.1.js" ></script>
 </head>
 
 <body>
     <h1>Polytris</h1>
+    <input id="chb_show_hashes" type="checkbox" />
+    <label for="chb_show_hashes">Show hashes</label>
     <div id="previews">
     </div>
     <script src="game.js"></script>
     <script>
+        function checkFilters() {
+            var showHashes = $("#chb_show_hashes").prop("checked");
+            if (showHashes) {
+                $(".hash").removeClass("hidden");
+            } else {
+                $(".hash").addClass("hidden");
+            }
+        }
+
+        $("#chb_show_hashes").change(checkFilters);
+
         var previewElement = document.getElementById("previews");
-    for (var i = 0; i < pieces.length; i++) {
-        previewElement.innerHTML += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas></div>`;
-    }
-    for (var i = 0; i < pieces.length; i++) {
-        var previewGtx = document.getElementById(`preview_gtx_${i}`).getContext("2d");
-        render(previewGtx, createGrid(polySize, polySize), pieces[i]);
-    }
+        for (var i = 0; i < pieces.length; i++) {
+            var hash = getHashPolyomino(pieces[i]);
+            previewElement.innerHTML += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div></div>`;
+        }
+        for (var i = 0; i < pieces.length; i++) {
+            var previewGtx = document.getElementById(`preview_gtx_${i}`).getContext("2d");
+            render(previewGtx, createGrid(polySize, polySize), pieces[i]);
+        }
+
+        checkFilters();
+
     </script>
 </body>
 

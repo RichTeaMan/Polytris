@@ -122,7 +122,9 @@ function getHashPolyomino(poly) {
         var polyHash = JSON.stringify(poly[i]);
         blockHashes.add(polyHash);
     }
-    return JSON.stringify(Array.from(blockHashes));
+
+
+    return JSON.stringify(Array.from(blockHashes).sort());
 }
 
 function createGrid(width, height) {
