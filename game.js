@@ -231,11 +231,6 @@ function tick() {
             // translate piece to middle of the grid
             moveCurrentPiece(gridWidth / 2, 0);
             nextPiece = spawnPiece();
-
-            var blockHashElement = document.getElementById("blockHash");
-            if (blockHashElement) {
-                blockHashElement.innerText = JSON.stringify(currentPiece);
-            }
         }
     }
 
