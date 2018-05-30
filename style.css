@@ -13,3 +13,6 @@ body {
 .hidden {
     display: none;
 }
+div#game_links a {
+    padding-right: 10px;
+}

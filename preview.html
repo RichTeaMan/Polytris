@@ -8,16 +8,30 @@
 
 <body>
     <h1>Polytris</h1>
+    <div id="game_links"></div>
     <div id="status">Generating pieces...</div>
     <input id="chb_show_hashes" type="checkbox" />
     <label for="chb_show_hashes">Show hashes</label>
     <div id="previews">
     </div>
-    <script>
-        var startTime = new Date().getTime();
-    </script>
     <script src="game.js"></script>
     <script>
+
+        var links = "Poly size: ";
+        for (var i = 1; i < 10; i++) {
+            links += `<a href="${window.location.pathname}?polySize=${i}">${i}</a>`
+        }
+        $("#game_links").html(links);
+
+        var startTime = new Date().getTime();
+        var polySize = 4;
+        var polySizeQuery = getQueryParam("polySize");
+        var polySize = parseInt(polySizeQuery, 10);
+        if (isNaN(polySize)) {
+            polySize = 4;
+        }
+
+        pieces = createPolyominoes(polySize);
         function checkFilters() {
             var showHashes = $("#chb_show_hashes").prop("checked");
             if (showHashes) {
@@ -30,13 +44,15 @@
         $("#chb_show_hashes").change(checkFilters);
 
         var previewElement = document.getElementById("previews");
+        var canvases = "";
         for (var i = 0; i < pieces.length; i++) {
             var hash = getHashPolyomino(pieces[i]);
-            previewElement.innerHTML += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div></div>`;
+            canvases += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div></div>`;
         }
+        previewElement.innerHTML = canvases;
         for (var i = 0; i < pieces.length; i++) {
             var previewGtx = document.getElementById(`preview_gtx_${i}`).getContext("2d");
-            render(previewGtx, createGrid(polySize, polySize), pieces[i]);
+            render(previewGtx, createGrid(pieces[i].length, pieces[i].length), pieces[i]);
         }
 
         var endTime = new Date().getTime();

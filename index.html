@@ -3,10 +3,12 @@
 <head>
     <title>Polytris</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="jquery-3.3.1.js" ></script>
 </head>
 
 <body>
     <h1>Polytris</h1>
+    <div id="game_links"></div>
     <div class="game_container main_container">
         <canvas id="gtx" width="400" height="560"></canvas>
     </div>
@@ -22,7 +24,19 @@
     </div>
     <script src="game.js"></script>
     <script>
-        startGame();
+        var links = "Poly size: ";
+        for (var i = 1; i < 10; i++) {
+            links += `<a href="${window.location.pathname}?polySize=${i}">${i}</a>`
+        }
+        $("#game_links").html(links);
+
+        var polySize = 4;
+        var polySizeQuery = getQueryParam("polySize");
+        var polySize = parseInt(polySizeQuery, 10);
+        if (isNaN(polySize)) {
+            polySize = 4;
+        }
+        startGame(polySize);
     </script>
 </body>
 

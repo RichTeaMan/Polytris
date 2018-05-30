@@ -69,9 +69,8 @@ class Poly {
     }
 }
 
-var gridWidth = 14;
-var gridHeight = 10;
-var polySize = 4;
+var gridWidth = 10;
+var gridHeight = 14;
 
 var logicTicks = 20;
 var currentTick = 0;
@@ -170,7 +169,7 @@ function attemptToGrowPoly(poly: Poly, block: Block, hashes: Set<String>, result
     for (var i = 0; i < poly.length; i++) {
         // existing block
         var eB = poly.blocks[i];
-        if (eB.x ==block.x && eB.y == block.y) {
+        if (eB.x == block.x && eB.y == block.y) {
             return false;
         }
     }
@@ -355,7 +354,7 @@ function tick() {
     }
 
     render(mainGtx, gameGrid, currentPiece);
-    render(previewGtx, createGrid(polySize, polySize), nextPiece);
+    render(previewGtx, createGrid(nextPiece.length, nextPiece.length), nextPiece);
 
     const newLocal = document.getElementById("lines_cleared");
     if (newLocal) {
@@ -478,7 +477,9 @@ window.onkeydown = function (e) {
     moveCurrentPiece(xMod, yMod);
 }
 
-function startGame() {
+function startGame(polySize: number) {
+
+    pieces = createPolyominoes(polySize);
     mainGtx = (<HTMLCanvasElement>document.getElementById("gtx")).getContext("2d");
     previewGtx = (<HTMLCanvasElement>document.getElementById("preview_gtx")).getContext("2d");
     currentPiece = spawnPiece();
@@ -487,11 +488,17 @@ function startGame() {
     setInterval(tick, 50);
 }
 
+function getQueryParam(name: String): String | boolean {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)')
+        .exec(window.location.search);
+
+    return (results && results[1]) || false;
+}
+
 
 var gameGrid = createGrid(gridWidth, gridHeight);
 
-var pieces = createPolyominoes(polySize);
-
+var pieces: Poly[];
 var mainGtx: CanvasRenderingContext2D;
 var previewGtx: CanvasRenderingContext2D;
 var currentPiece: Poly;
