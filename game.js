@@ -1,3 +1,28 @@
+"use strict";
+class Block {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+class Poly {
+    constructor() {
+        this.blocks = new Array();
+    }
+    static fromBlocks(blocks) {
+        var poly = new Poly();
+        poly.blocks = blocks;
+        return poly;
+    }
+    get length() {
+        return this.blocks.length;
+    }
+    createArray() {
+        var polyArray = new Array();
+        polyArray.push(this);
+        return polyArray;
+    }
+}
 var gridWidth = 10;
 var gridHeight = 14;
 var polySize = 4;
@@ -7,16 +32,22 @@ var currentTick = 0;
 var linesCleared = 0;
 function clonePoly(poly) {
     // ensure current piece is deeply cloned
-    var clone = new Array(poly.length);
+    var cloneBlocks = new Array(poly.length);
     for (var i = 0; i < poly.length; i++) {
-        var block = { "x": poly[i].x, "y": poly[i].y };
-        clone[i] = block;
+        var block = new Block(poly.blocks[i].x, poly.blocks[i].y);
+        cloneBlocks[i] = block;
     }
+    var clone = new Poly();
+    clone.blocks = cloneBlocks;
     return clone;
 }
 function createPolyominoes(n) {
     // create origin point
-    var polys = [[{ "x": 0, "y": 0 }]];
+    var polys = new Array();
+    var block = new Block(0, 0);
+    var startPoly = new Poly();
+    startPoly.blocks.push(block);
+    polys.push(startPoly);
     for (var i = 1; i < n; i++) {
         polys = expandPolys(polys);
     }
@@ -38,17 +69,17 @@ function normalisePoly(poly) {
     var negX = 0;
     var negY = 0;
     for (var i = 0; i < poly.length; i++) {
-        if (poly[i].x < negX) {
-            negX = poly[i].x;
+        if (poly.blocks[i].x < negX) {
+            negX = poly.blocks[i].x;
         }
-        if (poly[i].y < negY) {
-            negY = poly[i].y;
+        if (poly.blocks[i].y < negY) {
+            negY = poly.blocks[i].y;
         }
     }
     // add mod back to blocks
     for (var i = 0; i < poly.length; i++) {
-        poly[i].x += Math.abs(negX);
-        poly[i].y += Math.abs(negY);
+        poly.blocks[i].x += Math.abs(negX);
+        poly.blocks[i].y += Math.abs(negY);
     }
 }
 function expandPolys(startPolys) {
@@ -61,30 +92,34 @@ function expandPolys(startPolys) {
         for (var i = 0; i < poly.length; i++) {
             // add a block in all cardinalities
             // left
-            var leftCpoly = Array.from(poly);
-            var leftNewBlock = { "x": poly[i].x + 1, "y": poly[i].y };
-            leftCpoly.push(leftNewBlock);
+            var leftCblocks = Array.from(poly.blocks);
+            var leftNewBlock = new Block(poly.blocks[i].x + 1, poly.blocks[i].y);
+            leftCblocks.push(leftNewBlock);
+            var leftCpoly = Poly.fromBlocks(leftCblocks);
             if (getHashPolyomino(leftCpoly) != polyHash) {
                 resultPolys.add(leftCpoly);
             }
             // up
-            var upCpoly = Array.from(poly);
-            var upNewBlock = { "x": poly[i].x, "y": poly[i].y + 1 };
-            upCpoly.push(upNewBlock);
+            var upCblocks = Array.from(poly.blocks);
+            var upNewBlock = new Block(poly.blocks[i].x, poly.blocks[i].y + 1);
+            upCblocks.push(upNewBlock);
+            var upCpoly = Poly.fromBlocks(upCblocks);
             if (getHashPolyomino(upCpoly) != polyHash) {
                 resultPolys.add(upCpoly);
             }
             // right
-            var rightCpoly = Array.from(poly);
-            var rightNewBlock = { "x": poly[i].x - 1, "y": poly[i].y };
-            rightCpoly.push(rightNewBlock);
+            var rightCblocks = Array.from(poly.blocks);
+            var rightNewBlock = new Block(poly.blocks[i].x - 1, poly.blocks[i].y);
+            rightCblocks.push(rightNewBlock);
+            var rightCpoly = Poly.fromBlocks(rightCblocks);
             if (getHashPolyomino(rightCpoly) != polyHash) {
                 resultPolys.add(rightCpoly);
             }
             // down
-            var downCpoly = Array.from(poly);
-            var downNewBlock = { "x": poly[i].x, "y": poly[i].y - 1 };
-            downCpoly.push(downNewBlock);
+            var downCblocks = Array.from(poly.blocks);
+            var downNewBlock = new Block(poly.blocks[i].x, poly.blocks[i].y - 1);
+            downCblocks.push(downNewBlock);
+            var downCpoly = Poly.fromBlocks(downCblocks);
             if (getHashPolyomino(downCpoly) != polyHash) {
                 resultPolys.add(downCpoly);
             }
@@ -95,7 +130,7 @@ function expandPolys(startPolys) {
 function getHashPolyomino(poly) {
     var blockHashes = new Set();
     for (var i = 0; i < poly.length; i++) {
-        var polyHash = JSON.stringify(poly[i]);
+        var polyHash = JSON.stringify(poly.blocks[i]);
         blockHashes.add(polyHash);
     }
     return JSON.stringify(Array.from(blockHashes).sort());
@@ -124,12 +159,7 @@ function getRandomInt(min, max) {
 function spawnPiece() {
     var pieceId = getRandomInt(0, pieces.length);
     var piece = pieces[pieceId];
-    // ensure current piece is deeply cloned
-    var newPiece = new Array(piece.length);
-    for (var i = 0; i < piece.length; i++) {
-        var block = { "x": piece[i].x, "y": piece[i].y };
-        newPiece[i] = block;
-    }
+    var newPiece = clonePoly(piece);
     return newPiece;
 }
 /**
@@ -156,7 +186,7 @@ function render(gtx, grid, activePiece) {
     }
     gtx.fillStyle = "#0000FF";
     for (var i = 0; i < activePiece.length; i++) {
-        gtx.fillRect(activePiece[i].x * gridSquareLength, activePiece[i].y * gridSquareLength, gridSquareLength, gridSquareLength);
+        gtx.fillRect(activePiece.blocks[i].x * gridSquareLength, activePiece.blocks[i].y * gridSquareLength, gridSquareLength, gridSquareLength);
     }
 }
 /**
@@ -169,14 +199,14 @@ function render(gtx, grid, activePiece) {
 function moveCurrentPiece(xMod, yMod) {
     var canMovePiece = true;
     for (var i = 0; i < currentPiece.length; i++) {
-        if (currentPiece[i].y + yMod == gridHeight || gameGrid[currentPiece[i].x + xMod][currentPiece[i].y + yMod] != 0) {
+        if (currentPiece.blocks[i].y + yMod == gridHeight || gameGrid[currentPiece.blocks[i].x + xMod][currentPiece.blocks[i].y + yMod] != 0) {
             canMovePiece = false;
         }
     }
     if (canMovePiece) {
         for (var i = 0; i < currentPiece.length; i++) {
-            currentPiece[i].y += yMod;
-            currentPiece[i].x += xMod;
+            currentPiece.blocks[i].y += yMod;
+            currentPiece.blocks[i].x += xMod;
         }
     }
     return canMovePiece;
@@ -185,7 +215,7 @@ function tick() {
     if (currentTick % logicTicks == 0) {
         if (!moveCurrentPiece(0, 1)) {
             for (var i = 0; i < currentPiece.length; i++) {
-                gameGrid[currentPiece[i].x][currentPiece[i].y] = 1;
+                gameGrid[currentPiece.blocks[i].x][currentPiece.blocks[i].y] = 1;
             }
             checkLines();
             currentPiece = nextPiece;
@@ -196,7 +226,10 @@ function tick() {
     }
     render(mainGtx, gameGrid, currentPiece);
     render(previewGtx, createGrid(polySize, polySize), nextPiece);
-    document.getElementById("lines_cleared").innerHTML = linesCleared.toString();
+    const newLocal = document.getElementById("lines_cleared");
+    if (newLocal) {
+        newLocal.innerHTML = linesCleared.toString();
+    }
     currentTick++;
 }
 function checkLines() {
@@ -226,14 +259,14 @@ function rotateClockwise(poly) {
     var clone = clonePoly(poly);
     // rotate about the first block
     for (var i = 1; i < clone.length; i++) {
-        var x = clone[i].x - clone[0].x;
-        var y = clone[i].y - clone[0].y;
-        clone[i].x = -y + clone[0].x;
-        clone[i].y = x + clone[0].y;
+        var x = clone.blocks[i].x - clone.blocks[0].x;
+        var y = clone.blocks[i].y - clone.blocks[0].y;
+        clone.blocks[i].x = -y + clone.blocks[0].x;
+        clone.blocks[i].y = x + clone.blocks[0].y;
     }
     var canMovePiece = true;
     for (var i = 0; i < clone.length; i++) {
-        if (clone[i].y == gridHeight || gameGrid[clone[i].x][clone[i].y] != 0) {
+        if (clone.blocks[i].y == gridHeight || gameGrid[clone.blocks[i].x][clone.blocks[i].y] != 0) {
             canMovePiece = false;
         }
     }
@@ -245,14 +278,14 @@ function rotateClockwise(poly) {
 function rotateAntiClockwise(poly) {
     var clone = clonePoly(poly);
     for (var i = 1; i < clone.length; i++) {
-        var x = clone[i].x - clone[0].x;
-        var y = clone[i].y - clone[0].y;
-        clone[i].x = y + clone[0].x;
-        clone[i].y = -x + clone[0].y;
+        var x = clone.blocks[i].x - clone.blocks[0].x;
+        var y = clone.blocks[i].y - clone.blocks[0].y;
+        clone.blocks[i].x = y + clone.blocks[0].x;
+        clone.blocks[i].y = -x + clone.blocks[0].y;
     }
     var canMovePiece = true;
     for (var i = 0; i < clone.length; i++) {
-        if (clone[i].y == gridHeight || gameGrid[clone[i].x][clone[i].y] != 0) {
+        if (clone.blocks[i].y == gridHeight || gameGrid[clone.blocks[i].x][clone.blocks[i].y] != 0) {
             canMovePiece = false;
         }
     }
