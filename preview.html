@@ -8,10 +8,14 @@
 
 <body>
     <h1>Polytris</h1>
+    <div id="status">Generating pieces...</div>
     <input id="chb_show_hashes" type="checkbox" />
     <label for="chb_show_hashes">Show hashes</label>
     <div id="previews">
     </div>
+    <script>
+        var startTime = new Date().getTime();
+    </script>
     <script src="game.js"></script>
     <script>
         function checkFilters() {
@@ -34,6 +38,11 @@
             var previewGtx = document.getElementById(`preview_gtx_${i}`).getContext("2d");
             render(previewGtx, createGrid(polySize, polySize), pieces[i]);
         }
+
+        var endTime = new Date().getTime();
+        var milliseconds = endTime - startTime;
+
+        $("#status").html(`Generated ${pieces.length} pieces in ${milliseconds} milliseconds.`);
 
         checkFilters();
 
