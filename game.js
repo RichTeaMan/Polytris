@@ -22,6 +22,35 @@ class Poly {
         polyArray.push(this);
         return polyArray;
     }
+    rotateClockwise() {
+        var clone = clonePoly(this);
+        // rotate about the first block
+        for (var i = 1; i < clone.length; i++) {
+            var x = clone.blocks[i].x - clone.blocks[0].x;
+            var y = clone.blocks[i].y - clone.blocks[0].y;
+            clone.blocks[i].x = -y + clone.blocks[0].x;
+            clone.blocks[i].y = x + clone.blocks[0].y;
+        }
+        return clone;
+    }
+    rotateAntiClockwise() {
+        var clone = clonePoly(this);
+        for (var i = 1; i < clone.length; i++) {
+            var x = clone.blocks[i].x - clone.blocks[0].x;
+            var y = clone.blocks[i].y - clone.blocks[0].y;
+            clone.blocks[i].x = y + clone.blocks[0].x;
+            clone.blocks[i].y = -x + clone.blocks[0].y;
+        }
+        return clone;
+    }
+    getHash() {
+        var blockHashes = new Array();
+        for (var i = 0; i < this.length; i++) {
+            var polyHash = JSON.stringify(this.blocks[i]);
+            blockHashes.push(polyHash);
+        }
+        return JSON.stringify(Array.from(blockHashes).sort());
+    }
 }
 var gridWidth = 10;
 var gridHeight = 14;
@@ -48,18 +77,22 @@ function createPolyominoes(n) {
     var startPoly = new Poly();
     startPoly.blocks.push(block);
     polys.push(startPoly);
+    var hashes = new Set();
+    hashes.add(startPoly.getHash());
     for (var i = 1; i < n; i++) {
-        polys = expandPolys(polys);
+        polys = expandPolys(polys, hashes);
     }
     var hashPolys = new Set();
     var resultPolys = new Array();
     for (var i = 0; i < polys.length; i++) {
         var poly = clonePoly(polys[i]);
-        normalisePoly(poly);
-        var hash = getHashPolyomino(poly);
-        if (!hashPolys.has(hash)) {
-            hashPolys.add(hash);
-            resultPolys.push(poly);
+        if (poly.length == n) {
+            normalisePoly(poly);
+            var hash = getHashPolyomino(poly);
+            if (!hashPolys.has(hash)) {
+                hashPolys.add(hash);
+                resultPolys.push(poly);
+            }
         }
     }
     return resultPolys;
@@ -81,9 +114,59 @@ function normalisePoly(poly) {
         poly.blocks[i].x += Math.abs(negX);
         poly.blocks[i].y += Math.abs(negY);
     }
+    // left align piece
+    var smallX = poly.length;
+    var smallY = poly.length;
+    for (var i = 0; i < poly.length; i++) {
+        if (poly.blocks[i].x < smallX) {
+            smallX = poly.blocks[i].x;
+        }
+        if (poly.blocks[i].y < smallY) {
+            smallY = poly.blocks[i].y;
+        }
+    }
+    // add mod back to blocks
+    for (var i = 0; i < poly.length; i++) {
+        poly.blocks[i].x -= Math.abs(smallX);
+        poly.blocks[i].y -= Math.abs(smallY);
+    }
 }
-function expandPolys(startPolys) {
-    var resultPolys = new Set();
+function attemptToGrowPoly(poly, block, hashes, resultPolys) {
+    // check if block already exists in poly
+    for (var i = 0; i < poly.length; i++) {
+        // existing block
+        var eB = poly.blocks[i];
+        if (eB.x == block.x && eB.y == block.y) {
+            return false;
+        }
+    }
+    var blocks = Array.from(poly.blocks);
+    blocks.push(block);
+    var newPoly = Poly.fromBlocks(blocks);
+    normalisePoly(newPoly);
+    var addPoly = true;
+    var newHashes = new Array();
+    for (var i = 0; i < 4; i++) {
+        var hash = newPoly.getHash();
+        if (hashes.has(hash)) {
+            addPoly = false;
+        }
+        else {
+            newHashes.push(hash);
+            newPoly = newPoly.rotateClockwise();
+            normalisePoly(newPoly);
+        }
+    }
+    newHashes.forEach((hash, i, _newHashes) => {
+        hashes.add(hash);
+    });
+    if (addPoly) {
+        resultPolys.add(newPoly);
+    }
+    return addPoly;
+}
+function expandPolys(startPolys, hashes) {
+    var resultPolys = new Set(startPolys);
     // iterate through all polys
     for (var p = 0; p < startPolys.length; p++) {
         var poly = startPolys[p];
@@ -92,37 +175,13 @@ function expandPolys(startPolys) {
         for (var i = 0; i < poly.length; i++) {
             // add a block in all cardinalities
             // left
-            var leftCblocks = Array.from(poly.blocks);
-            var leftNewBlock = new Block(poly.blocks[i].x + 1, poly.blocks[i].y);
-            leftCblocks.push(leftNewBlock);
-            var leftCpoly = Poly.fromBlocks(leftCblocks);
-            if (getHashPolyomino(leftCpoly) != polyHash) {
-                resultPolys.add(leftCpoly);
-            }
+            attemptToGrowPoly(poly, new Block(poly.blocks[i].x + 1, poly.blocks[i].y), hashes, resultPolys);
             // up
-            var upCblocks = Array.from(poly.blocks);
-            var upNewBlock = new Block(poly.blocks[i].x, poly.blocks[i].y + 1);
-            upCblocks.push(upNewBlock);
-            var upCpoly = Poly.fromBlocks(upCblocks);
-            if (getHashPolyomino(upCpoly) != polyHash) {
-                resultPolys.add(upCpoly);
-            }
+            attemptToGrowPoly(poly, new Block(poly.blocks[i].x, poly.blocks[i].y + 1), hashes, resultPolys);
             // right
-            var rightCblocks = Array.from(poly.blocks);
-            var rightNewBlock = new Block(poly.blocks[i].x - 1, poly.blocks[i].y);
-            rightCblocks.push(rightNewBlock);
-            var rightCpoly = Poly.fromBlocks(rightCblocks);
-            if (getHashPolyomino(rightCpoly) != polyHash) {
-                resultPolys.add(rightCpoly);
-            }
+            attemptToGrowPoly(poly, new Block(poly.blocks[i].x - 1, poly.blocks[i].y), hashes, resultPolys);
             // down
-            var downCblocks = Array.from(poly.blocks);
-            var downNewBlock = new Block(poly.blocks[i].x, poly.blocks[i].y - 1);
-            downCblocks.push(downNewBlock);
-            var downCpoly = Poly.fromBlocks(downCblocks);
-            if (getHashPolyomino(downCpoly) != polyHash) {
-                resultPolys.add(downCpoly);
-            }
+            attemptToGrowPoly(poly, new Block(poly.blocks[i].x, poly.blocks[i].y - 1), hashes, resultPolys);
         }
     }
     return Array.from(resultPolys);
