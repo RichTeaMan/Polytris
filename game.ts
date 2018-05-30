@@ -69,11 +69,9 @@ class Poly {
     }
 }
 
-var gridWidth = 10;
-var gridHeight = 14;
+var gridWidth = 14;
+var gridHeight = 10;
 var polySize = 4;
-
-var gridSquareLength = 40;
 
 var logicTicks = 20;
 var currentTick = 0;
@@ -288,8 +286,11 @@ function spawnPiece(): Poly {
  */
 function render(gtx: CanvasRenderingContext2D, grid: any[], activePiece: Poly) {
 
-    gtx.fillStyle = "#FF0000";
-    gtx.fillRect(0, 0, 800, 800);
+    var cellWidth = Math.floor(gtx.canvas.width / grid.length);
+    var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
+
+    gtx.fillStyle = "#FFFFFF";
+    gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
     var width = grid.length;
     var height = grid[0].length;
 
@@ -300,13 +301,13 @@ function render(gtx: CanvasRenderingContext2D, grid: any[], activePiece: Poly) {
             } else {
                 gtx.fillStyle = "#0000FF";
             }
-            gtx.fillRect(i * gridSquareLength, j * gridSquareLength, gridSquareLength, gridSquareLength);
+            gtx.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
         }
     }
 
     gtx.fillStyle = "#0000FF";
     for (var i = 0; i < activePiece.length; i++) {
-        gtx.fillRect(activePiece.blocks[i].x * gridSquareLength, activePiece.blocks[i].y * gridSquareLength, gridSquareLength, gridSquareLength);
+        gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
     }
 }
 
