@@ -12,8 +12,11 @@ class Block {
 class Poly {
     blocks: Array<Block>;
 
+    _hashCode: number;
+
     constructor() {
         this.blocks = new Array<Block>();
+        this._hashCode = null;
     }
 
     static fromBlocks(blocks: Block[]): Poly {
@@ -67,6 +70,23 @@ class Poly {
         }
         return JSON.stringify(Array.from(blockHashes).sort());
     }
+
+    getHashCode(): number {
+
+        if (this._hashCode === null) {
+
+            var hashCode = 0;
+            var hashStr = this.getHash();
+            if (hashStr.length == 0) return hashCode;
+            for (var i = 0; i < hashStr.length; i++) {
+                var char = hashStr.charCodeAt(i);
+                hashCode = ((hashCode << 5) - hashCode) + char;
+                hashCode = hashCode & hashCode; // Convert to 32bit integer
+            }
+            this._hashCode = hashCode;
+        }
+        return this._hashCode;
+    }
 }
 
 var gridWidth = 10;
@@ -86,6 +106,7 @@ function clonePoly(poly: Poly): Poly {
     }
     var clone = new Poly();
     clone.blocks = cloneBlocks;
+    clone._hashCode = poly._hashCode;
     return clone;
 }
 
@@ -295,19 +316,29 @@ function render(gtx: CanvasRenderingContext2D, grid: any[], activePiece: Poly) {
 
     for (var i = 0; i < width; i++) {
         for (var j = 0; j < height; j++) {
-            if (grid[i][j] == 0) {
+            if (grid[i][j] === 0) {
                 gtx.fillStyle = "#FFFFFF";
             } else {
-                gtx.fillStyle = "#0000FF";
+                gtx.fillStyle = grid[i][j];
             }
             gtx.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
         }
     }
-
-    gtx.fillStyle = "#0000FF";
+    gtx.fillStyle = createPolyColor(activePiece);
     for (var i = 0; i < activePiece.length; i++) {
         gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
     }
+}
+
+/**
+ * Creates a hex string colour for a given poly. The colour will be
+ * consistent as the poly moves and rotates.
+ * @param poly 
+ */
+function createPolyColor(poly: Poly): string {
+    var hashCode = poly.getHashCode();
+    var color = Math.abs(hashCode) % 15777215;
+    return "#" + color.toString(16);
 }
 
 /**
@@ -342,7 +373,7 @@ function tick() {
         if (!moveCurrentPiece(0, 1)) {
 
             for (var i = 0; i < currentPiece.length; i++) {
-                gameGrid[currentPiece.blocks[i].x][currentPiece.blocks[i].y] = 1;
+                gameGrid[currentPiece.blocks[i].x][currentPiece.blocks[i].y] = createPolyColor(currentPiece);
             }
 
             checkLines();
