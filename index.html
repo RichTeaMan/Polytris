@@ -3,7 +3,7 @@
 <head>
     <title>Polytris</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="jquery-3.3.1.js" ></script>
+    <script src="jquery-3.3.1.js"></script>
 </head>
 
 <body>
@@ -36,7 +36,47 @@
         if (isNaN(polySize)) {
             polySize = 4;
         }
-        startGame(polySize);
+
+        var game = new PolytrisGame(10, 14, polySize);
+        game.startGame();
+
+
+        window.onkeydown = function (e) {
+            var key = e.keyCode ? e.keyCode : e.which;
+
+            var left = 37
+            var up = 38
+            var right = 39
+            var down = 40
+            var xMod = 0;
+            var yMod = 0;
+
+            // up
+            if (key == 38) {
+
+            }
+            // down
+            else if (key == 40) {
+                yMod++;
+            }
+            // left
+            else if (key == 37) {
+                xMod--;
+            }
+            // right
+            else if (key == 39) {
+                xMod++;
+            }
+            // X
+            else if (key == 88) {
+                game.currentPiece = game.rotateClockwise(game.currentPiece);
+            }
+            // Z
+            else if (key == 90) {
+                game.currentPiece = game.rotateAntiClockwise(game.currentPiece);
+            }
+            game.moveCurrentPiece(xMod, yMod);
+        }
     </script>
 </body>
 
