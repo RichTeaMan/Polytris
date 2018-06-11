@@ -44,10 +44,6 @@
         window.onkeydown = function (e) {
             var key = e.keyCode ? e.keyCode : e.which;
 
-            var left = 37
-            var up = 38
-            var right = 39
-            var down = 40
             var xMod = 0;
             var yMod = 0;
 
@@ -69,11 +65,11 @@
             }
             // X
             else if (key == 88) {
-                game.currentPiece = game.rotateClockwise(game.currentPiece);
+                game.rotateCurrentPieceClockwise();
             }
             // Z
             else if (key == 90) {
-                game.currentPiece = game.rotateAntiClockwise(game.currentPiece);
+                game.rotateCurrentPieceAntiClockwise();
             }
             game.moveCurrentPiece(xMod, yMod);
         }

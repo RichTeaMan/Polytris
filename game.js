@@ -339,15 +339,11 @@ class PolytrisGame {
         }
         this.gameGrid = newGameGrid;
     }
-    rotateClockwise(poly) {
-        var clone = poly.clonePoly();
-        // rotate about the first block
-        for (var i = 1; i < clone.length; i++) {
-            var x = clone.blocks[i].x - clone.blocks[0].x;
-            var y = clone.blocks[i].y - clone.blocks[0].y;
-            clone.blocks[i].x = -y + clone.blocks[0].x;
-            clone.blocks[i].y = x + clone.blocks[0].y;
-        }
+    /**
+     * Rotates the current piece clockwise. Returns true if the move was possible.
+     */
+    rotateCurrentPieceClockwise() {
+        var clone = this.currentPiece.rotateClockwise();
         var canMovePiece = true;
         for (var i = 0; i < clone.length; i++) {
             if (clone.blocks[i].y == this.gridHeight || this.gameGrid[clone.blocks[i].x][clone.blocks[i].y] != 0) {
@@ -355,18 +351,15 @@ class PolytrisGame {
             }
         }
         if (canMovePiece) {
-            poly = clone;
+            this.currentPiece = clone;
         }
-        return poly;
+        return canMovePiece;
     }
-    rotateAntiClockwise(poly) {
-        var clone = poly.clonePoly();
-        for (var i = 1; i < clone.length; i++) {
-            var x = clone.blocks[i].x - clone.blocks[0].x;
-            var y = clone.blocks[i].y - clone.blocks[0].y;
-            clone.blocks[i].x = y + clone.blocks[0].x;
-            clone.blocks[i].y = -x + clone.blocks[0].y;
-        }
+    /**
+     * Rotates the current piece anticlockwise. Returns true if the move was possible.
+     */
+    rotateCurrentPieceAntiClockwise() {
+        var clone = this.currentPiece.rotateAntiClockwise();
         var canMovePiece = true;
         for (var i = 0; i < clone.length; i++) {
             if (clone.blocks[i].y == this.gridHeight || this.gameGrid[clone.blocks[i].x][clone.blocks[i].y] != 0) {
@@ -374,9 +367,9 @@ class PolytrisGame {
             }
         }
         if (canMovePiece) {
-            poly = clone;
+            this.currentPiece = clone;
         }
-        return poly;
+        return canMovePiece;
     }
     startGame() {
         this.mainGtx = document.getElementById("gtx").getContext("2d");
