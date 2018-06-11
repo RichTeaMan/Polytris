@@ -94,7 +94,11 @@ class PolytrisGame {
                     this.checkLines();
                     this.currentPiece = this.nextPiece;
                     // translate piece to middle of the grid
-                    this.moveCurrentPiece(this.gridWidth / 2, 0);
+                    if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
+                        // game over 
+                        prompt("Game over. What is your name?", this.linesCleared.toString());
+                        location.reload();
+                    }
                     this.nextPiece = this.spawnPiece();
                 }
             }
