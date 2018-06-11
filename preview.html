@@ -31,7 +31,8 @@
             polySize = 4;
         }
 
-        pieces = createPolyominoes(polySize);
+        var game = new PolytrisGame(10, 14, polySize);
+        pieces = game.createPolyominoes(polySize);
         function checkFilters() {
             var showHashes = $("#chb_show_hashes").prop("checked");
             if (showHashes) {
@@ -46,13 +47,13 @@
         var previewElement = document.getElementById("previews");
         var canvases = "";
         for (var i = 0; i < pieces.length; i++) {
-            var hash = getHashPolyomino(pieces[i]);
+            var hash = game.getHashPolyomino(pieces[i]);
             canvases += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div></div>`;
         }
         previewElement.innerHTML = canvases;
         for (var i = 0; i < pieces.length; i++) {
             var previewGtx = document.getElementById(`preview_gtx_${i}`).getContext("2d");
-            render(previewGtx, createGrid(pieces[i].length, pieces[i].length), pieces[i]);
+            game.render(previewGtx, game.createGrid(pieces[i].length, pieces[i].length), pieces[i]);
         }
 
         var endTime = new Date().getTime();
