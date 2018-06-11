@@ -75,6 +75,25 @@ class Poly {
         return clone;
     }
 
+    /**
+     * Creates a hex string colour for a given poly. The colour will be
+     * consistent as the poly moves and rotates.
+     * @param poly 
+     */
+    createPolyColor(): string {
+        var hashCode = this.getHashCode();
+        var color = Math.abs(hashCode);
+        var limit = 13777215;
+        if (color > limit) {
+            color = color % limit;
+        }
+        var code = color.toString(16);
+        while (code.length < 6) {
+            code = "0" + code;
+        }
+        return "#" + code;
+    }
+
     getHash(): String {
         var blockHashes = new Array();
         for (var i = 0; i < this.length; i++) {
@@ -329,21 +348,10 @@ class PolytrisGame {
                 gtx.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
             }
         }
-        gtx.fillStyle = this.createPolyColor(activePiece);
+        gtx.fillStyle = activePiece.createPolyColor();
         for (var i = 0; i < activePiece.length; i++) {
             gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
         }
-    }
-
-    /**
-     * Creates a hex string colour for a given poly. The colour will be
-     * consistent as the poly moves and rotates.
-     * @param poly 
-     */
-    createPolyColor(poly: Poly): string {
-        var hashCode = poly.getHashCode();
-        var color = Math.abs(hashCode) % 15777215;
-        return "#" + color.toString(16);
     }
 
     /**
@@ -378,7 +386,7 @@ class PolytrisGame {
             if (!this.moveCurrentPiece(0, 1)) {
 
                 for (var i = 0; i < this.currentPiece.length; i++) {
-                    this.gameGrid[this.currentPiece.blocks[i].x][this.currentPiece.blocks[i].y] = this.createPolyColor(this.currentPiece);
+                    this.gameGrid[this.currentPiece.blocks[i].x][this.currentPiece.blocks[i].y] = this.currentPiece.createPolyColor();
                 }
 
                 this.checkLines();

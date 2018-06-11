@@ -12,6 +12,8 @@
     <div id="status">Generating pieces...</div>
     <input id="chb_show_hashes" type="checkbox" />
     <label for="chb_show_hashes">Show hashes</label>
+    <input id="chb_colour_code" type="checkbox" />
+    <label for="chb_colour_code">Show colour code</label>
     <div id="previews">
     </div>
     <script src="game.js"></script>
@@ -41,14 +43,25 @@
                 $(".hash").addClass("hidden");
             }
         }
+        function checkColourCodes() {
+            var showHashes = $("#chb_colour_codes").prop("checked");
+            if (showHashes) {
+                $(".colour").removeClass("hidden");
+            } else {
+                $(".colour").addClass("hidden");
+            }
+        }
+
 
         $("#chb_show_hashes").change(checkFilters);
+        $("#chb_colour_codes").change(checkColourCodes);
 
         var previewElement = document.getElementById("previews");
         var canvases = "";
         for (var i = 0; i < pieces.length; i++) {
             var hash = game.getHashPolyomino(pieces[i]);
-            canvases += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div></div>`;
+            var colour = game.pieces[i].createPolyColor();
+            canvases += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div><div class="colour">${colour}</div></div>`;
         }
         previewElement.innerHTML = canvases;
         for (var i = 0; i < pieces.length; i++) {
