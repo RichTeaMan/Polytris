@@ -101,9 +101,11 @@ class Poly {
 }
 class PolytrisGame {
     constructor(gridWidth, gridHeight, polySize) {
-        this.logicTicks = 20;
+        this.logicTicks = 53;
         this.currentTick = 0;
         this.linesCleared = 0;
+        this.score = 0;
+        this.level = 0;
         this.tick = () => {
             if (this.currentTick % this.logicTicks == 0) {
                 if (!this.moveCurrentPiece(0, 1)) {
@@ -116,16 +118,18 @@ class PolytrisGame {
                     if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
                         // game over 
                         var name = prompt("Game over. What is your name?", "");
-                        $.ajax({
-                            url: "http://localhost/api/score",
-                            headers: {
-                                "name": name,
-                                "lines": this.linesCleared.toString(10),
-                                "points": "9999",
-                                "blocks": this.polySize.toString(10)
-                            },
-                            method: "POST"
-                        });
+                        if (name) {
+                            $.ajax({
+                                url: "http://localhost/api/score",
+                                headers: {
+                                    "name": name,
+                                    "lines": this.linesCleared.toString(10),
+                                    "points": this.score.toString(10),
+                                    "blocks": this.polySize.toString(10)
+                                },
+                                method: "POST"
+                            });
+                        }
                         location.reload();
                     }
                     this.nextPiece = this.spawnPiece();
@@ -133,9 +137,17 @@ class PolytrisGame {
             }
             this.render(this.mainGtx, this.gameGrid, this.currentPiece);
             this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece);
-            const newLocal = document.getElementById("lines_cleared");
-            if (newLocal) {
-                newLocal.innerHTML = this.linesCleared.toString();
+            const linesClearedElement = document.getElementById("lines_cleared");
+            if (linesClearedElement) {
+                linesClearedElement.innerHTML = this.linesCleared.toString();
+            }
+            const scoreElement = document.getElementById("score");
+            if (scoreElement) {
+                scoreElement.innerHTML = this.score.toString();
+            }
+            const levelElement = document.getElementById("level");
+            if (levelElement) {
+                levelElement.innerHTML = this.level.toString();
             }
             this.currentTick++;
         };
@@ -336,7 +348,14 @@ class PolytrisGame {
         }
         return canMovePiece;
     }
+    calculateLineClearedBonus(linesCleared) {
+        var base = (this.level + 1) * 25;
+        var bonus = base * Math.pow(3.5, linesCleared - 1);
+        bonus = Math.floor(bonus);
+        return bonus;
+    }
     checkLines() {
+        var linesAdded = 0;
         var addedLineCount = this.gridHeight - 1;
         var newGameGrid = this.createGrid(this.gridWidth, this.gridHeight);
         for (var j = this.gridHeight - 1; j >= 0; j--) {
@@ -348,7 +367,7 @@ class PolytrisGame {
                 }
             }
             if (clearLine) {
-                this.linesCleared++;
+                linesAdded++;
             }
             else {
                 for (var i = 0; i < this.gridWidth; i++) {
@@ -357,6 +376,10 @@ class PolytrisGame {
                 addedLineCount--;
             }
         }
+        if (linesAdded > 0) {
+            this.score += this.calculateLineClearedBonus(linesAdded);
+        }
+        this.linesCleared += linesAdded;
         this.gameGrid = newGameGrid;
     }
     /**
@@ -397,7 +420,7 @@ class PolytrisGame {
         this.currentPiece = this.spawnPiece();
         this.moveCurrentPiece(this.gridWidth / 2, 0);
         this.nextPiece = this.spawnPiece();
-        setInterval(this.tick, 50);
+        setInterval(this.tick, 17);
     }
 }
 /**
