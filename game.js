@@ -354,6 +354,84 @@ class PolytrisGame {
         bonus = Math.floor(bonus);
         return bonus;
     }
+    calculateLevelUp() {
+        var earnedLevel = Math.floor(this.linesCleared / 10);
+        if (earnedLevel > 20) {
+            earnedLevel = 20;
+        }
+        if (earnedLevel > this.level) {
+            this.level = earnedLevel;
+            switch (this.level) {
+                case 0:
+                    this.logicTicks = 53;
+                    break;
+                case 1:
+                    this.logicTicks = 49;
+                    break;
+                case 2:
+                    this.logicTicks = 45;
+                    break;
+                case 3:
+                    this.logicTicks = 41;
+                    break;
+                case 4:
+                    this.logicTicks = 37;
+                    break;
+                case 5:
+                    this.logicTicks = 33;
+                    break;
+                case 6:
+                    this.logicTicks = 28;
+                    break;
+                case 7:
+                    this.logicTicks = 22;
+                    break;
+                case 8:
+                    this.logicTicks = 17;
+                    break;
+                case 9:
+                    this.logicTicks = 11;
+                    break;
+                case 10:
+                    this.logicTicks = 10;
+                    break;
+                case 11:
+                    this.logicTicks = 9;
+                    break;
+                case 12:
+                    this.logicTicks = 8;
+                    break;
+                case 13:
+                    this.logicTicks = 7;
+                    break;
+                case 14:
+                    this.logicTicks = 6;
+                    break;
+                case 15:
+                    this.logicTicks = 6;
+                    break;
+                case 16:
+                    this.logicTicks = 5;
+                    break;
+                case 17:
+                    this.logicTicks = 5;
+                    break;
+                case 18:
+                    this.logicTicks = 4;
+                    break;
+                case 19:
+                    this.logicTicks = 4;
+                    break;
+                case 20:
+                    this.logicTicks = 3;
+                    break;
+                default:
+                    this.logicTicks = 3;
+                    break;
+            }
+            this.currentTick = 0;
+        }
+    }
     checkLines() {
         var linesAdded = 0;
         var addedLineCount = this.gridHeight - 1;
@@ -381,6 +459,7 @@ class PolytrisGame {
         }
         this.linesCleared += linesAdded;
         this.gameGrid = newGameGrid;
+        this.calculateLevelUp();
     }
     /**
      * Rotates the current piece clockwise. Returns true if the move was possible.
