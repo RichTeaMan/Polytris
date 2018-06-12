@@ -128,9 +128,10 @@ class PolytrisGame {
                                     "blocks": this.polySize.toString(10)
                                 },
                                 method: "POST"
+                            }).done(function () {
+                                location.reload();
                             });
                         }
-                        location.reload();
                     }
                     this.nextPiece = this.spawnPiece();
                 }
