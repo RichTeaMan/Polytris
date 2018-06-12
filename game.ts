@@ -1,3 +1,4 @@
+//import * as $ from "jquery";
 
 class Block {
     public x: number;
@@ -137,6 +138,7 @@ class PolytrisGame {
     previewGtx: CanvasRenderingContext2D;
     currentPiece: Poly;
     nextPiece: Poly;
+    polySize: number;
 
     constructor(gridWidth: number, gridHeight: number, polySize: number) {
 
@@ -144,6 +146,7 @@ class PolytrisGame {
         this.gridHeight = gridHeight;
         this.pieces = this.createPolyominoes(polySize);
         this.gameGrid = this.createGrid(this.gridWidth, this.gridHeight);
+        this.polySize = polySize;
     }
 
     createPolyominoes(n: number): Poly[] {
@@ -394,7 +397,19 @@ class PolytrisGame {
                 // translate piece to middle of the grid
                 if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
                     // game over 
-                    prompt("Game over. What is your name?", this.linesCleared.toString());
+                    var name = prompt("Game over. What is your name?", "");
+
+                    $.ajax({
+                        url: "http://localhost/api/score",
+                        headers: {
+                            "name": name,
+                            "lines": this.linesCleared.toString(10),
+                            "points": "9999",
+                            "blocks": this.polySize.toString(10)
+                        },
+                        method: "POST"
+                    });
+
                     location.reload();
                 }
                 this.nextPiece = this.spawnPiece();
