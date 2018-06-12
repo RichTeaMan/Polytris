@@ -403,7 +403,7 @@ class PolytrisGame {
 
                     if (name) {
                         $.ajax({
-                            url: "http://localhost/api/score",
+                            url: "http://scores.richteaman.com/api/score",
                             headers: {
                                 "name": name,
                                 "lines": this.linesCleared.toString(10),

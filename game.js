@@ -120,7 +120,7 @@ class PolytrisGame {
                         var name = prompt("Game over. What is your name?", "");
                         if (name) {
                             $.ajax({
-                                url: "http://localhost/api/score",
+                                url: "http://scores.richteaman.com/api/score",
                                 headers: {
                                     "name": name,
                                     "lines": this.linesCleared.toString(10),

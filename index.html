@@ -47,7 +47,7 @@
     <script src="game.js"></script>
     <script>
         // get highscores
-        $.get("http://localhost/api/score").done(function (scores) {
+        $.get("http://scores.richteaman.com/api/score").done(function (scores) {
             var scoreHtml = "";
             for (var i = 0; i < 20; i++) {
                 if (i < scores.length) {
