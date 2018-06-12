@@ -120,7 +120,7 @@ class PolytrisGame {
                         var name = prompt("Game over. What is your name?", "");
                         if (name) {
                             $.ajax({
-                                url: "http://scores.richteaman.com/api/score",
+                                url: "https://cors-anywhere.herokuapp.com/http://scores.richteaman.com/api/score",
                                 headers: {
                                     "name": name,
                                     "lines": this.linesCleared.toString(10),
