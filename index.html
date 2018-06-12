@@ -30,8 +30,35 @@
             <canvas id="preview_gtx" width="160" height="160"></canvas>
         </div>
     </div>
+    <div id="high_scores" class="high_score_container">
+        <h2>High Scores</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Lines</th>
+                    <th>Poly size</th>
+                </tr>
+            </thead>
+            <tbody id="score_table"></tbody>
+        </table>
+    </div>
     <script src="game.js"></script>
     <script>
+        // get highscores
+        $.get("http://localhost/api/score").done(function (scores) {
+            var scoreHtml = "";
+            for (var i = 0; i < 20; i++) {
+                if (i < scores.length) {
+                    var score = scores[i];
+                    var lineHtml = `<tr><td>${score.name}</td><td>${score.points}</td><td>${score.lines}</td><td>${score.blocks}</td></tr>`;
+                    scoreHtml += lineHtml;
+                }
+            }
+            $("#score_table").html(scoreHtml);
+        });
+
         var links = "Poly size: ";
         for (var i = 1; i < 10; i++) {
             links += `<a href="${window.location.pathname}?polySize=${i}">${i}</a>`

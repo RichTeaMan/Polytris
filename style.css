@@ -5,6 +5,17 @@ body {
     border: 2px solid black;
     display: inline-block;
 }
+.high_score_container {
+    border: 2px solid black;
+    display: inline-block;
+    padding: 2px;
+}
+.high_score_container > table {
+    display: inline-block;
+}
+td {
+    padding-right: 10px;
+}
 .info_container {
     border: 2px solid black;
     display: inline-block;
