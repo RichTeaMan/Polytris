@@ -134,6 +134,8 @@ class PolytrisGame {
     score = 0;
     level = 0;
 
+    paused = false;
+
     gameGrid: any[][];
     pieces: Poly[];
     mainGtx: CanvasRenderingContext2D;
@@ -386,7 +388,7 @@ class PolytrisGame {
 
     tick = () => {
 
-        if (this.currentTick % this.logicTicks == 0) {
+        if (!this.paused && this.currentTick % this.logicTicks == 0) {
 
             if (!this.moveCurrentPiece(0, 1)) {
 
@@ -423,6 +425,13 @@ class PolytrisGame {
 
         this.render(this.mainGtx, this.gameGrid, this.currentPiece);
         this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece);
+
+        const statusElement = document.getElementById("status");
+        if (this.paused) {
+            statusElement.innerHTML = "Paused";
+        } else {
+            statusElement.innerHTML = "";
+        }
 
         const linesClearedElement = document.getElementById("lines_cleared");
         if (linesClearedElement) {

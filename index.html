@@ -10,6 +10,7 @@
     <h1>Polytris</h1>
     <div id="game_links"></div>
     <div>Move pieces with the arrow keys. Rotate with Z and X.</div>
+    <div id="status"></div>
     <div class="game_container main_container">
         <canvas id="gtx" width="400" height="720"></canvas>
     </div>
@@ -83,29 +84,35 @@
             var xMod = 0;
             var yMod = 0;
 
-            // up
-            if (key == 38) {
+            if (!game.paused) {
+                // up
+                if (key == 38) {
 
+                }
+                // down
+                else if (key == 40) {
+                    yMod++;
+                }
+                // left
+                else if (key == 37) {
+                    xMod--;
+                }
+                // right
+                else if (key == 39) {
+                    xMod++;
+                }
+                // X
+                else if (key == 88) {
+                    game.rotateCurrentPieceClockwise();
+                }
+                // Z
+                else if (key == 90) {
+                    game.rotateCurrentPieceAntiClockwise();
+                }
             }
-            // down
-            else if (key == 40) {
-                yMod++;
-            }
-            // left
-            else if (key == 37) {
-                xMod--;
-            }
-            // right
-            else if (key == 39) {
-                xMod++;
-            }
-            // X
-            else if (key == 88) {
-                game.rotateCurrentPieceClockwise();
-            }
-            // Z
-            else if (key == 90) {
-                game.rotateCurrentPieceAntiClockwise();
+            // P
+            if (key == 80) {
+                game.paused = !game.paused;
             }
             game.moveCurrentPiece(xMod, yMod);
         }
