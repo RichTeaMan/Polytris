@@ -362,6 +362,15 @@ class PolytrisGame {
         var newPiece = piece.clonePoly();
         return newPiece;
     }
+    renderBlock(gtx, x, y, width, height, colour) {
+        var margin = 2;
+        gtx.fillStyle = colour;
+        gtx.fillRect(x, y, width, height);
+        gtx.fillStyle = "rgba(0, 0, 0, 0.1)";
+        gtx.fillRect(x, y, width, height);
+        gtx.fillStyle = colour;
+        gtx.fillRect(x + margin, y + margin, width - (2 * margin), height - (2 * margin));
+    }
     /**
      * Renders the given grid on the given context with the given active piece as a game.
      * @param {*} gtx
@@ -379,11 +388,12 @@ class PolytrisGame {
             for (var j = 0; j < height; j++) {
                 if (grid[i][j] === 0) {
                     gtx.fillStyle = "#FFFFFF";
+                    gtx.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
                 }
                 else {
-                    gtx.fillStyle = grid[i][j];
+                    var blockColour = grid[i][j];
+                    this.renderBlock(gtx, i * cellWidth, j * cellHeight, cellWidth, cellHeight, blockColour);
                 }
-                gtx.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
             }
         }
         if (this.removingLinesFrames > 0) {
@@ -400,9 +410,9 @@ class PolytrisGame {
             }
         }
         else {
-            gtx.fillStyle = activePiece.createPolyColor();
+            var colour = activePiece.createPolyColor();
             for (var i = 0; i < activePiece.length; i++) {
-                gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
+                this.renderBlock(gtx, activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight, colour);
             }
         }
         if (this.gameOver) {
@@ -433,9 +443,9 @@ class PolytrisGame {
         gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
         var width = grid.length;
         var height = grid[0].length;
-        gtx.fillStyle = activePiece.createPolyColor();
+        var colour = activePiece.createPolyColor();
         for (var i = 0; i < activePiece.length; i++) {
-            gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
+            this.renderBlock(gtx, activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight, colour);
         }
     }
     /**
