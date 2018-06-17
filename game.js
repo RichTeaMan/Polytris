@@ -586,3 +586,18 @@ function getQueryParam(name) {
         .exec(window.location.search);
     return (results && results[1]) || false;
 }
+var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+};
+function escapeHtml(value) {
+    return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+        return entityMap[s];
+    });
+}

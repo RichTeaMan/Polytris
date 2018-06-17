@@ -671,3 +671,20 @@ function getQueryParam(name: String): String | boolean {
 
     return (results && results[1]) || false;
 }
+
+var entityMap: any = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+};
+
+function escapeHtml(value: string) {
+    return String(value).replace(/[&<>"'`=\/]/g, function (s) {
+        return entityMap[s];
+    });
+}
