@@ -461,6 +461,7 @@ class PolytrisGame {
             }
 
             if (y == this.gridHeight ||
+                !(x >= 0 && x < this.gridWidth) ||
                 this.gameGrid[x][y] != 0) {
                 canMovePiece = false;
             }
@@ -641,7 +642,15 @@ class PolytrisGame {
 
         var canMovePiece = true;
         for (var i = 0; i < clone.length; i++) {
-            if (clone.blocks[i].y == this.gridHeight || this.gameGrid[clone.blocks[i].x][clone.blocks[i].y] != 0) {
+            var x = clone.blocks[i].x;
+            var y = clone.blocks[i].y;
+            if (y < 0) {
+                y = 0;
+            }
+
+            if (y == this.gridHeight ||
+                !(x >= 0 && x < this.gridWidth) ||
+                this.gameGrid[x][y] != 0) {
                 canMovePiece = false;
             }
         }
@@ -661,7 +670,15 @@ class PolytrisGame {
 
         var canMovePiece = true;
         for (var i = 0; i < clone.length; i++) {
-            if (clone.blocks[i].y == this.gridHeight || this.gameGrid[clone.blocks[i].x][clone.blocks[i].y] != 0) {
+            var x = clone.blocks[i].x;
+            var y = clone.blocks[i].y;
+            if (y < 0) {
+                y = 0;
+            }
+
+            if (y == this.gridHeight ||
+                !(x >= 0 && x < this.gridWidth) ||
+                this.gameGrid[x][y] != 0) {
                 canMovePiece = false;
             }
         }
