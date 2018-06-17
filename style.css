@@ -7,7 +7,15 @@ body {
 @font-face {
     font-family: 'PressStart2P';
     src: url('fonts/PressStart2P.ttf')  format('truetype');
-  }
+}
+
+a:link {
+    color: black;
+}
+
+a:visited {
+    color: black;
+}
 
 #main {
     margin-left:100px;
@@ -18,6 +26,10 @@ body {
 }
 
 h1 {
+    font-family: PressStart2P, Arial, Helvetica, sans-serif;
+}
+
+.emphasis {
     font-family: PressStart2P, Arial, Helvetica, sans-serif;
 }
 
