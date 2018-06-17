@@ -363,12 +363,12 @@ class PolytrisGame {
         return newPiece;
     }
     /**
-     * Renders the given grid on the given context with the given active piece.
+     * Renders the given grid on the given context with the given active piece as a game.
      * @param {*} gtx
      * @param {any[][]} grid
      * @param {any[]} activePiece
      */
-    render(gtx, grid, activePiece) {
+    renderGame(gtx, grid, activePiece) {
         var cellWidth = Math.floor(gtx.canvas.width / grid.length);
         var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
         gtx.fillStyle = "#FFFFFF";
@@ -386,19 +386,25 @@ class PolytrisGame {
                 gtx.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
             }
         }
-        gtx.fillStyle = activePiece.createPolyColor();
-        for (var i = 0; i < activePiece.length; i++) {
-            gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
+        if (this.removingLinesFrames > 0) {
+            var cellWidth = Math.floor(gtx.canvas.width / grid.length);
+            var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
+            if (Math.floor(this.removingLinesFrames / 5) % 2 == 0) {
+                gtx.fillStyle = "#CCCC00";
+                this.linesToRemove.forEach(lineNumber => {
+                    gtx.fillRect(0, lineNumber * cellHeight, this.gridWidth * cellWidth, cellHeight);
+                });
+            }
+            else {
+                gtx.fillStyle = "#000000";
+            }
         }
-    }
-    /**
-     * Renders the given grid on the given context with the given active piece as a game.
-     * @param {*} gtx
-     * @param {any[][]} grid
-     * @param {any[]} activePiece
-     */
-    renderGame(gtx, grid, activePiece) {
-        this.render(gtx, grid, activePiece);
+        else {
+            gtx.fillStyle = activePiece.createPolyColor();
+            for (var i = 0; i < activePiece.length; i++) {
+                gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
+            }
+        }
         if (this.gameOver) {
             gtx.fillStyle = "rgba(10, 10, 10, 0.9)";
             gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
@@ -413,19 +419,6 @@ class PolytrisGame {
             gtx.fillStyle = "#FFFFFF";
             gtx.fillText("Paused", 105, gtx.canvas.height / 2);
         }
-        else if (this.removingLinesFrames > 0) {
-            var cellWidth = Math.floor(gtx.canvas.width / grid.length);
-            var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
-            if (Math.floor(this.removingLinesFrames / 5) % 2 == 0) {
-                gtx.fillStyle = "#CCCC00";
-                this.linesToRemove.forEach(lineNumber => {
-                    gtx.fillRect(0, lineNumber * cellHeight, this.gridWidth * cellWidth, cellHeight);
-                });
-            }
-            else {
-                gtx.fillStyle = "#000000";
-            }
-        }
     }
     /**
      * Renders the given grid on the given context with the given active piece as a preview.
@@ -434,7 +427,16 @@ class PolytrisGame {
      * @param {any[]} activePiece
      */
     renderPreview(gtx, grid, activePiece) {
-        this.render(gtx, grid, activePiece);
+        var cellWidth = Math.floor(gtx.canvas.width / grid.length);
+        var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
+        gtx.fillStyle = "#FFFFFF";
+        gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
+        var width = grid.length;
+        var height = grid[0].length;
+        gtx.fillStyle = activePiece.createPolyColor();
+        for (var i = 0; i < activePiece.length; i++) {
+            gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
+        }
     }
     /**
      * Return true if move was possible, other false.
