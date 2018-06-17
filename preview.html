@@ -3,17 +3,23 @@
 <head>
     <title>Polytris</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="jquery-3.3.1.js" ></script>
+    <script src="jquery-3.3.1.js"></script>
 </head>
 
 <body>
-    <h1><a href="/Polytris">Polytris</a></h1>
+    <h1>
+        <a href="/Polytris">Polytris</a>
+    </h1>
     <div id="game_links"></div>
-    <div id="status">Generating pieces...</div>
-    <input id="chb_show_hashes" type="checkbox" />
-    <label for="chb_show_hashes">Show hashes</label>
-    <input id="chb_colour_code" type="checkbox" />
-    <label for="chb_colour_code">Show colour code</label>
+    <p id="status">Generating pieces...</p>
+    <div>
+        <p>
+            <input id="chb_show_hashes" type="checkbox" />
+            <label for="chb_show_hashes">Show hashes</label>
+            <input id="chb_colour_code" type="checkbox" />
+            <label for="chb_colour_code">Show colour code</label>
+        </p>
+    </div>
     <div id="previews">
     </div>
     <script src="game.js"></script>
@@ -42,9 +48,7 @@
             } else {
                 $(".hash").addClass("hidden");
             }
-        }
-        function checkColourCodes() {
-            var showHashes = $("#chb_colour_codes").prop("checked");
+            var showHashes = $("#chb_colour_code").prop("checked");
             if (showHashes) {
                 $(".colour").removeClass("hidden");
             } else {
@@ -52,16 +56,15 @@
             }
         }
 
-
         $("#chb_show_hashes").change(checkFilters);
-        $("#chb_colour_codes").change(checkColourCodes);
+        $("#chb_colour_code").change(checkFilters);
 
         var previewElement = document.getElementById("previews");
         var canvases = "";
         for (var i = 0; i < pieces.length; i++) {
             var hash = game.getHashPolyomino(pieces[i]);
             var colour = game.pieces[i].createPolyColor();
-            canvases += `<div class="preview_page_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div><div class="colour">${colour}</div></div>`;
+            canvases += `<div class="preview_page_container"><div class="small_text">Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash small_text">${hash}</div><div class="colour small_text">${colour}</div></div>`;
         }
         previewElement.innerHTML = canvases;
         for (var i = 0; i < pieces.length; i++) {

@@ -117,10 +117,12 @@ class PolytrisGame {
         this.level = 0;
         this.paused = false;
         this.gameOver = false;
+        this.gameOverPromptShown = false;
         this.tick = () => {
-            if (this.gameOver) {
+            if (this.gameOver && !this.gameOverPromptShown) {
                 // game over handling
                 var name = prompt("Game over. What is your name?", "");
+                this.gameOverPromptShown = true;
                 if (name) {
                     this.writeStatus("Submitting score...");
                     $.ajax({

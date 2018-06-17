@@ -146,6 +146,7 @@ class PolytrisGame {
 
     paused = false;
     gameOver = false;
+    gameOverPromptShown = false;
 
     gameGrid: any[][];
     pieces: Poly[];
@@ -476,9 +477,10 @@ class PolytrisGame {
 
     tick = () => {
 
-        if (this.gameOver) {
+        if (this.gameOver && !this.gameOverPromptShown) {
             // game over handling
             var name = prompt("Game over. What is your name?", "");
+            this.gameOverPromptShown = true;
 
             if (name) {
                 this.writeStatus("Submitting score...");
