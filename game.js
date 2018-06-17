@@ -118,6 +118,29 @@ class PolytrisGame {
         this.paused = false;
         this.gameOver = false;
         this.tick = () => {
+            if (this.gameOver) {
+                // game over handling
+                var name = prompt("Game over. What is your name?", "");
+                if (name) {
+                    this.writeStatus("Submitting score...");
+                    $.ajax({
+                        url: "https://cors-anywhere.herokuapp.com/http://scores.richteaman.com/api/score",
+                        headers: {
+                            "name": name,
+                            "lines": this.linesCleared.toString(10),
+                            "points": this.score.toString(10),
+                            "blocks": this.polySize.toString(10)
+                        },
+                        method: "POST"
+                    })
+                        .always(function () {
+                        location.reload();
+                    });
+                }
+                else {
+                    location.reload();
+                }
+            }
             if (!this.gameOver && !this.paused && this.currentTick % this.logicTicks == 0) {
                 if (!this.moveCurrentPiece(0, 1)) {
                     for (var i = 0; i < this.currentPiece.length; i++) {
@@ -127,42 +150,16 @@ class PolytrisGame {
                     this.currentPiece = this.nextPiece;
                     // translate piece to middle of the grid
                     if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
+                        // game over handled by next tick so a render can happen.
                         this.gameOver = true;
-                        // game over 
-                        var name = prompt("Game over. What is your name?", "");
-                        if (name) {
-                            this.writeStatus("Submitting score...");
-                            $.ajax({
-                                url: "https://cors-anywhere.herokuapp.com/http://scores.richteaman.com/api/score",
-                                headers: {
-                                    "name": name,
-                                    "lines": this.linesCleared.toString(10),
-                                    "points": this.score.toString(10),
-                                    "blocks": this.polySize.toString(10)
-                                },
-                                method: "POST"
-                            })
-                                .always(function () {
-                                location.reload();
-                            });
-                        }
-                        else {
-                            location.reload();
-                        }
                     }
-                    this.nextPiece = this.spawnPiece();
+                    else {
+                        this.nextPiece = this.spawnPiece();
+                    }
                 }
             }
-            if (!this.gameOver) {
-                this.render(this.mainGtx, this.gameGrid, this.currentPiece);
-                this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece.createPreviewPiece());
-                if (this.paused) {
-                    this.writeStatus("Paused");
-                }
-                else {
-                    this.writeStatus("");
-                }
-            }
+            this.renderGame(this.mainGtx, this.gameGrid, this.currentPiece);
+            this.renderPreview(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece.createPreviewPiece());
             const linesClearedElement = document.getElementById("lines_cleared");
             if (linesClearedElement) {
                 linesClearedElement.innerHTML = this.linesCleared.toString();
@@ -381,6 +378,38 @@ class PolytrisGame {
         for (var i = 0; i < activePiece.length; i++) {
             gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
         }
+    }
+    /**
+     * Renders the given grid on the given context with the given active piece as a game.
+     * @param {*} gtx
+     * @param {any[][]} grid
+     * @param {any[]} activePiece
+     */
+    renderGame(gtx, grid, activePiece) {
+        this.render(gtx, grid, activePiece);
+        if (this.gameOver) {
+            gtx.fillStyle = "rgba(10, 10, 10, 0.9)";
+            gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
+            gtx.font = "30px PressStart2P";
+            gtx.fillStyle = "#FFFFFF";
+            gtx.fillText("Game over", 70, gtx.canvas.height / 2);
+        }
+        else if (this.paused) {
+            gtx.fillStyle = "#000000";
+            gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
+            gtx.font = "30px PressStart2P";
+            gtx.fillStyle = "#FFFFFF";
+            gtx.fillText("Paused", 105, gtx.canvas.height / 2);
+        }
+    }
+    /**
+     * Renders the given grid on the given context with the given active piece as a preview.
+     * @param {*} gtx
+     * @param {any[][]} grid
+     * @param {any[]} activePiece
+     */
+    renderPreview(gtx, grid, activePiece) {
+        this.render(gtx, grid, activePiece);
     }
     /**
      * Return true if move was possible, other false.
