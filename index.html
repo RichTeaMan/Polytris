@@ -34,7 +34,7 @@
     </div>
     <div id="high_scores" class="high_score_container">
         <h2>High Scores</h2>
-        <table>
+        <table id="score_table">
             <thead>
                 <tr>
                     <th>Name</th>
@@ -43,7 +43,7 @@
                     <th>Poly size</th>
                 </tr>
             </thead>
-            <tbody id="score_table"></tbody>
+            <tbody id="score_table_body"></tbody>
         </table>
     </div>
     <script src="game.js"></script>
@@ -58,7 +58,11 @@
                     scoreHtml += lineHtml;
                 }
             }
-            $("#score_table").html(scoreHtml);
+            $("#score_table_body").html(scoreHtml);
+        })
+        .fail(function (data) {
+            console.log("Failed to load high scores.", data);
+            $("#score_table").html("Failed to load high scores.");
         });
 
         var links = "Poly size: ";
