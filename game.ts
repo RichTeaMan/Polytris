@@ -156,6 +156,12 @@ class PolytrisGame {
     nextPiece: Poly;
     polySize: number;
 
+    removingLinesFrames = 0;
+    linesToRemove: number[] = null;
+
+    /** The total number of frames to remove lines for. */
+    removingLinesFramesDelay = 50;
+
     constructor(gridWidth: number, gridHeight: number, polySize: number) {
 
         this.gridWidth = gridWidth;
@@ -431,6 +437,21 @@ class PolytrisGame {
             gtx.fillStyle = "#FFFFFF";
             gtx.fillText("Paused", 105, gtx.canvas.height / 2);
         }
+        else if (this.removingLinesFrames > 0) {
+
+            var cellWidth = Math.floor(gtx.canvas.width / grid.length);
+            var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
+
+            if (Math.floor(this.removingLinesFrames / 5) % 2 == 0) {
+                gtx.fillStyle = "#CCCC00";
+                this.linesToRemove.forEach(lineNumber => {
+    
+                    gtx.fillRect(0, lineNumber * cellHeight, this.gridWidth * cellWidth, cellHeight);
+                });
+            } else {
+                gtx.fillStyle = "#000000";
+            }
+        }
     }
 
     /**
@@ -503,15 +524,22 @@ class PolytrisGame {
             }
         }
 
-        if (!this.gameOver && !this.paused && this.currentTick % this.logicTicks == 0) {
+        if (this.removingLinesFrames > 0) {
+
+            this.removingLinesFrames--;
+            if (this.removingLinesFrames == 0) {
+                this.removeLines();
+            }
+        }
+        else if (!this.gameOver && !this.paused && this.currentTick % this.logicTicks == 0) {
 
             if (!this.moveCurrentPiece(0, 1)) {
 
                 for (var i = 0; i < this.currentPiece.length; i++) {
                     this.gameGrid[this.currentPiece.blocks[i].x][this.currentPiece.blocks[i].y] = this.currentPiece.createPolyColor();
                 }
-
                 this.checkLines();
+
                 this.currentPiece = this.nextPiece;
                 // translate piece to middle of the grid
                 if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
@@ -599,6 +627,33 @@ class PolytrisGame {
     }
 
     checkLines() {
+
+        var removedLines = new Array<number>();
+        for (var j = this.gridHeight - 1; j >= 0; j--) {
+
+            var clearLine = true;
+            for (var i = 0; i < this.gridWidth; i++) {
+                if (this.gameGrid[i][j] == 0) {
+                    clearLine = false;
+                    break;
+                }
+
+            }
+            if (clearLine) {
+                removedLines.push(j);
+            }
+        }
+
+        if (removedLines.length > 0) {
+            this.linesToRemove = removedLines;
+            this.removingLinesFrames = this.removingLinesFramesDelay;
+
+            return true;
+        }
+        return false;
+    }
+
+    removeLines() {
 
         var linesAdded = 0;
         var addedLineCount = this.gridHeight - 1;
