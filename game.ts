@@ -39,7 +39,7 @@ class Poly {
         }
         var clone = new Poly();
         clone.blocks = cloneBlocks;
-        clone._hashCode = this._hashCode;
+        clone._hashCode = this.getHashCode();
         return clone;
     }
 
@@ -93,6 +93,16 @@ class Poly {
             code = "0" + code;
         }
         return "#" + code;
+    }
+
+    createPreviewPiece(): Poly {
+        var previewPiece = this.clonePoly();
+        for (var i = 0; i < previewPiece.blocks.length; i++) {
+            var block = previewPiece.blocks[i];
+            block.x += Math.floor(previewPiece.blocks.length / 2) - 1;
+            block.y += Math.floor(previewPiece.blocks.length / 2) - 1;
+        }
+        return previewPiece;
     }
 
     getHash(): String {
@@ -466,13 +476,7 @@ class PolytrisGame {
         }
 
         this.render(this.mainGtx, this.gameGrid, this.currentPiece);
-        var previewPiece = this.nextPiece.clonePoly();
-        for(var i = 0; i < previewPiece.blocks.length; i++) {
-            var block = previewPiece.blocks[i];
-            block.x += (previewPiece.blocks.length/2) - 1;
-            block.y += (previewPiece.blocks.length/2) - 1;
-        }
-        this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), previewPiece);
+        this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece.createPreviewPiece());
 
         const statusElement = document.getElementById("status");
         if (this.paused) {
