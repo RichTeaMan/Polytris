@@ -145,6 +145,7 @@ class PolytrisGame {
     level = 0;
 
     paused = false;
+    gameOver = false;
 
     gameGrid: any[][];
     pieces: Poly[];
@@ -440,7 +441,7 @@ class PolytrisGame {
 
     tick = () => {
 
-        if (!this.paused && this.currentTick % this.logicTicks == 0) {
+        if (!this.gameOver && !this.paused && this.currentTick % this.logicTicks == 0) {
 
             if (!this.moveCurrentPiece(0, 1)) {
 
@@ -452,10 +453,14 @@ class PolytrisGame {
                 this.currentPiece = this.nextPiece;
                 // translate piece to middle of the grid
                 if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
+
+                    this.gameOver = true;
+
                     // game over 
                     var name = prompt("Game over. What is your name?", "");
 
                     if (name) {
+                        this.writeStatus("Submitting score...");
                         $.ajax({
                             url: "https://cors-anywhere.herokuapp.com/http://scores.richteaman.com/api/score",
                             headers: {
@@ -465,9 +470,12 @@ class PolytrisGame {
                                 "blocks": this.polySize.toString(10)
                             },
                             method: "POST"
-                        }).done(function () {
-                            location.reload();
                         })
+                            .always(function () {
+                                location.reload();
+                            });
+                    } else {
+                        location.reload();
                     }
 
                 }
@@ -475,14 +483,15 @@ class PolytrisGame {
             }
         }
 
-        this.render(this.mainGtx, this.gameGrid, this.currentPiece);
-        this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece.createPreviewPiece());
+        if (!this.gameOver) {
+            this.render(this.mainGtx, this.gameGrid, this.currentPiece);
+            this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece.createPreviewPiece());
 
-        const statusElement = document.getElementById("status");
-        if (this.paused) {
-            statusElement.innerHTML = "Paused";
-        } else {
-            statusElement.innerHTML = "";
+            if (this.paused) {
+                this.writeStatus("Paused");
+            } else {
+                this.writeStatus("");
+            }
         }
 
         const linesClearedElement = document.getElementById("lines_cleared");
@@ -501,6 +510,13 @@ class PolytrisGame {
         }
 
         this.currentTick++;
+    }
+
+    writeStatus(message: string) {
+        const statusElement = document.getElementById("status");
+        if (statusElement) {
+            statusElement.innerHTML = message;
+        }
     }
 
     calculateLineClearedBonus(linesCleared: number) {
