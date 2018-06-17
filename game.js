@@ -144,7 +144,13 @@ var PolytrisGame = /** @class */ (function () {
                 }
             }
             _this.render(_this.mainGtx, _this.gameGrid, _this.currentPiece);
-            _this.render(_this.previewGtx, _this.createGrid(_this.nextPiece.length, _this.nextPiece.length), _this.nextPiece);
+            var previewPiece = _this.nextPiece.clonePoly();
+            for (var i = 0; i < previewPiece.blocks.length; i++) {
+                var block = previewPiece.blocks[i];
+                block.x += previewPiece.blocks.length;
+                block.y += previewPiece.blocks.length;
+            }
+            _this.render(_this.previewGtx, _this.createGrid(_this.nextPiece.length, _this.nextPiece.length), previewPiece);
             var statusElement = document.getElementById("status");
             if (_this.paused) {
                 statusElement.innerHTML = "Paused";
@@ -173,6 +179,7 @@ var PolytrisGame = /** @class */ (function () {
         this.polySize = polySize;
     }
     PolytrisGame.prototype.createPolyominoes = function (n) {
+        var _this = this;
         // create origin point
         var polys = new Array();
         var block = new Block(0, 0);
@@ -197,7 +204,37 @@ var PolytrisGame = /** @class */ (function () {
                 }
             }
         }
+        resultPolys.forEach(function (poly) {
+            _this.centerPoly(poly);
+        });
         return resultPolys;
+    };
+    PolytrisGame.prototype.centerPoly = function (poly) {
+        // find middle block
+        var maxX = 0;
+        var minX = 100000;
+        var maxY = 0;
+        var minY = 100000;
+        poly.blocks.forEach(function (block) {
+            if (block.x > maxX) {
+                maxX = block.x;
+            }
+            if (block.x < minX) {
+                minX = block.x;
+            }
+            if (block.y > maxY) {
+                maxY = block.y;
+            }
+            if (block.y < minY) {
+                minY = block.y;
+            }
+        });
+        var middleX = Math.floor((maxX - minX) / 2);
+        var middleY = Math.floor((maxY - minY) / 2);
+        poly.blocks.forEach(function (block) {
+            block.x -= middleX;
+            block.y -= middleY;
+        });
     };
     PolytrisGame.prototype.normalisePoly = function (poly) {
         // find most negative x and y
@@ -351,7 +388,13 @@ var PolytrisGame = /** @class */ (function () {
     PolytrisGame.prototype.moveCurrentPiece = function (xMod, yMod) {
         var canMovePiece = true;
         for (var i = 0; i < this.currentPiece.length; i++) {
-            if (this.currentPiece.blocks[i].y + yMod == this.gridHeight || this.gameGrid[this.currentPiece.blocks[i].x + xMod][this.currentPiece.blocks[i].y + yMod] != 0) {
+            var x = this.currentPiece.blocks[i].x + xMod;
+            var y = this.currentPiece.blocks[i].y + yMod;
+            if (y < 0) {
+                y = 0;
+            }
+            if (y == this.gridHeight ||
+                this.gameGrid[x][y] != 0) {
                 canMovePiece = false;
             }
         }

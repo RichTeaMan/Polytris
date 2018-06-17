@@ -183,7 +183,42 @@ class PolytrisGame {
                 }
             }
         }
+        resultPolys.forEach(poly => {
+            this.centerPoly(poly);
+        });
         return resultPolys;
+    }
+
+    centerPoly(poly: Poly) {
+        // find middle block
+
+        var maxX = 0;
+        var minX = 100000;
+        var maxY = 0;
+        var minY = 100000;
+
+        poly.blocks.forEach(block => {
+            if (block.x > maxX) {
+                maxX = block.x;
+            }
+            if (block.x < minX) {
+                minX = block.x;
+            }
+            if (block.y > maxY) {
+                maxY = block.y;
+            }
+            if (block.y < minY) {
+                minY = block.y;
+            }
+        });
+
+        var middleX = Math.floor((maxX - minX) / 2);
+        var middleY = Math.floor((maxY - minY) / 2);
+
+        poly.blocks.forEach(block => {
+            block.x -= middleX;
+            block.y -= middleY;
+        });
     }
 
     normalisePoly(poly: Poly) {
@@ -372,7 +407,14 @@ class PolytrisGame {
 
         var canMovePiece = true;
         for (var i = 0; i < this.currentPiece.length; i++) {
-            if (this.currentPiece.blocks[i].y + yMod == this.gridHeight || this.gameGrid[this.currentPiece.blocks[i].x + xMod][this.currentPiece.blocks[i].y + yMod] != 0) {
+            var x = this.currentPiece.blocks[i].x + xMod;
+            var y = this.currentPiece.blocks[i].y + yMod;
+            if (y < 0) {
+                y = 0;
+            }
+
+            if (y == this.gridHeight ||
+                this.gameGrid[x][y] != 0) {
                 canMovePiece = false;
             }
         }
@@ -413,7 +455,7 @@ class PolytrisGame {
                                 "blocks": this.polySize.toString(10)
                             },
                             method: "POST"
-                        }).done(function(){
+                        }).done(function () {
                             location.reload();
                         })
                     }
@@ -424,7 +466,13 @@ class PolytrisGame {
         }
 
         this.render(this.mainGtx, this.gameGrid, this.currentPiece);
-        this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece);
+        var previewPiece = this.nextPiece.clonePoly();
+        for(var i = 0; i < previewPiece.blocks.length; i++) {
+            var block = previewPiece.blocks[i];
+            block.x += previewPiece.blocks.length;
+            block.y += previewPiece.blocks.length;
+        }
+        this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), previewPiece);
 
         const statusElement = document.getElementById("status");
         if (this.paused) {
