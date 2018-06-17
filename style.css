@@ -4,13 +4,44 @@ body {
     background-repeat: repeat;
 }
 
+@font-face {
+    font-family: 'PressStart2P';
+    src: url('fonts/PressStart2P.ttf')  format('truetype');
+  }
+
+#main {
+    margin-left:100px;
+}
+
+#game_row {
+    height: 720px;
+}
+
+h1 {
+    font-family: PressStart2P, Arial, Helvetica, sans-serif;
+}
+
+.container {
+    font-family: PressStart2P, Arial, Helvetica, sans-serif;
+    float: left;
+    background: white;
+    height: 100%;
+}
+.preview_page_container {
+    border: 2px solid black;
+    padding-bottom: 2px;
+    float: left;
+    background: white;
+}
 .game_container {
     border: 2px solid black;
-    display: inline-block;
+    padding-bottom: 2px;
+}
+.game_container canvas {
+    padding-top: 2px;
 }
 .high_score_container {
     border: 2px solid black;
-    display: inline-block;
     padding: 2px;
 }
 .high_score_container > table {
@@ -20,9 +51,19 @@ td {
     padding-right: 10px;
 }
 .info_container {
+    display: flex;
+    flex-direction: column;
     border: 2px solid black;
-    display: inline-block;
-    padding: 2px;
+    margin-left: 10px;
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+}
+.preview_container {
+    margin-top: auto;
+}
+.preview_container canvas {
+    margin: 2px;
 }
 .hidden {
     display: none;

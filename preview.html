@@ -61,7 +61,7 @@
         for (var i = 0; i < pieces.length; i++) {
             var hash = game.getHashPolyomino(pieces[i]);
             var colour = game.pieces[i].createPolyColor();
-            canvases += `<div class="game_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div><div class="colour">${colour}</div></div>`;
+            canvases += `<div class="preview_page_container"><div>Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash">${hash}</div><div class="colour">${colour}</div></div>`;
         }
         previewElement.innerHTML = canvases;
         for (var i = 0; i < pieces.length; i++) {

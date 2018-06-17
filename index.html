@@ -7,63 +7,37 @@
 </head>
 
 <body>
-    <h1>Polytris</h1>
-    <div id="game_links"></div>
-    <div>Move pieces with the arrow keys. Rotate with Z and X.</div>
-    <div id="status"></div>
-    <div class="game_container main_container">
-        <canvas id="gtx" width="400" height="720"></canvas>
+    <div id="main">
+        <h1>Polytris</h1>
+        <div id="game_links"></div>
+        <div>Move pieces with the arrow keys. Rotate with Z and X.</div>
+        <div id="status"></div>
+        <div id="game_row">
+            <div class="game_container main_container container">
+                <canvas id="gtx" width="400" height="720"></canvas>
+            </div>
+            <div class="info_container container">
+                <div>
+                    <span>Score: </span>
+                    <span id="score" />
+                </div>
+                <div>
+                    <span>Lines: </span>
+                    <span id="lines_cleared" />
+                </div>
+                <div>
+                    <span>Level: </span>
+                    <span id="level" />
+                </div>
+                <div class="game_container preview_container">
+                    <div>Preview Pane</div>
+                    <canvas id="preview_gtx" width="160" height="160"></canvas>
+                </div>
+            </div>
     </div>
-    <div class="info_container">
-        <div>
-            <span>Score: </span>
-            <span id="score" />
-        </div>
-        <div>
-            <span>Lines: </span>
-            <span id="lines_cleared" />
-        </div>
-        <div>
-            <span>Level: </span>
-            <span id="level" />
-        </div>
-        <div class="game_container preview_container">
-            <div>Preview Pane</div>
-            <canvas id="preview_gtx" width="160" height="160"></canvas>
-        </div>
-    </div>
-    <div id="high_scores" class="high_score_container">
-        <h2>High Scores</h2>
-        <table id="score_table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Score</th>
-                    <th>Lines</th>
-                    <th>Poly size</th>
-                </tr>
-            </thead>
-            <tbody id="score_table_body"></tbody>
-        </table>
     </div>
     <script src="game.js"></script>
     <script>
-        // get highscores
-        $.get("https://cors-anywhere.herokuapp.com/http://scores.richteaman.com/api/score").done(function (scores) {
-            var scoreHtml = "";
-            for (var i = 0; i < 20; i++) {
-                if (i < scores.length) {
-                    var score = scores[i];
-                    var lineHtml = `<tr><td>${escapeHtml(score.name)}</td><td>${escapeHtml(score.points)}</td><td>${escapeHtml(score.lines)}</td><td>${escapeHtml(score.blocks)}</td></tr>`;
-                    scoreHtml += lineHtml;
-                }
-            }
-            $("#score_table_body").html(scoreHtml);
-        })
-        .fail(function (data) {
-            console.log("Failed to load high scores.", data);
-            $("#score_table").html("Failed to load high scores.");
-        });
 
         var links = "Poly size: ";
         for (var i = 1; i < 10; i++) {

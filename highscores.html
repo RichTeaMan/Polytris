@@ -1,0 +1,49 @@
+<html>
+
+<head>
+    <title>Polytris</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="jquery-3.3.1.js"></script>
+</head>
+
+<body>
+    <div id="main">
+        <h1>Polytris</h1>
+        <div id="high_scores" class="high_score_container">
+            <h2>High Scores</h2>
+            <table id="score_table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Score</th>
+                        <th>Lines</th>
+                        <th>Poly size</th>
+                    </tr>
+                </thead>
+                <tbody id="score_table_body"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="game.js"></script>
+    <script>
+        // get highscores
+        $.get("https://cors-anywhere.herokuapp.com/http://scores.richteaman.com/api/score").done(function (scores) {
+            var scoreHtml = "";
+            for (var i = 0; i < 20; i++) {
+                if (i < scores.length) {
+                    var score = scores[i];
+                    var lineHtml = `<tr><td>${escapeHtml(score.name)}</td><td>${escapeHtml(score.points)}</td><td>${escapeHtml(score.lines)}</td><td>${escapeHtml(score.blocks)}</td></tr>`;
+                    scoreHtml += lineHtml;
+                }
+            }
+            $("#score_table_body").html(scoreHtml);
+        })
+        .fail(function (data) {
+            console.log("Failed to load high scores.", data);
+            $("#score_table").html("Failed to load high scores.");
+        });
+
+    </script>
+</body>
+
+</html>
