@@ -1,29 +1,25 @@
+"use strict";
 //import * as $ from "jquery";
-var Block = /** @class */ (function () {
-    function Block(x, y) {
+class Block {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
     }
-    return Block;
-}());
-var Poly = /** @class */ (function () {
-    function Poly() {
+}
+class Poly {
+    constructor() {
         this.blocks = new Array();
         this._hashCode = null;
     }
-    Poly.fromBlocks = function (blocks) {
+    static fromBlocks(blocks) {
         var poly = new Poly();
         poly.blocks = blocks;
         return poly;
-    };
-    Object.defineProperty(Poly.prototype, "length", {
-        get: function () {
-            return this.blocks.length;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Poly.prototype.clonePoly = function () {
+    }
+    get length() {
+        return this.blocks.length;
+    }
+    clonePoly() {
         // ensure current piece is deeply cloned
         var cloneBlocks = new Array(this.length);
         for (var i = 0; i < this.length; i++) {
@@ -34,13 +30,13 @@ var Poly = /** @class */ (function () {
         clone.blocks = cloneBlocks;
         clone._hashCode = this._hashCode;
         return clone;
-    };
-    Poly.prototype.createArray = function () {
+    }
+    createArray() {
         var polyArray = new Array();
         polyArray.push(this);
         return polyArray;
-    };
-    Poly.prototype.rotateClockwise = function () {
+    }
+    rotateClockwise() {
         var clone = this.clonePoly();
         // rotate about the first block
         for (var i = 1; i < clone.length; i++) {
@@ -50,8 +46,8 @@ var Poly = /** @class */ (function () {
             clone.blocks[i].y = x + clone.blocks[0].y;
         }
         return clone;
-    };
-    Poly.prototype.rotateAntiClockwise = function () {
+    }
+    rotateAntiClockwise() {
         var clone = this.clonePoly();
         for (var i = 1; i < clone.length; i++) {
             var x = clone.blocks[i].x - clone.blocks[0].x;
@@ -60,13 +56,13 @@ var Poly = /** @class */ (function () {
             clone.blocks[i].y = -x + clone.blocks[0].y;
         }
         return clone;
-    };
+    }
     /**
      * Creates a hex string colour for a given poly. The colour will be
      * consistent as the poly moves and rotates.
      * @param poly
      */
-    Poly.prototype.createPolyColor = function () {
+    createPolyColor() {
         var hashCode = this.getHashCode();
         var color = Math.abs(hashCode);
         var limit = 13777215;
@@ -78,16 +74,16 @@ var Poly = /** @class */ (function () {
             code = "0" + code;
         }
         return "#" + code;
-    };
-    Poly.prototype.getHash = function () {
+    }
+    getHash() {
         var blockHashes = new Array();
         for (var i = 0; i < this.length; i++) {
             var polyHash = JSON.stringify(this.blocks[i]);
             blockHashes.push(polyHash);
         }
         return JSON.stringify(Array.from(blockHashes).sort());
-    };
-    Poly.prototype.getHashCode = function () {
+    }
+    getHashCode() {
         if (this._hashCode === null) {
             var hashCode = 0;
             var hashStr = this.getHash();
@@ -101,28 +97,26 @@ var Poly = /** @class */ (function () {
             this._hashCode = hashCode;
         }
         return this._hashCode;
-    };
-    return Poly;
-}());
-var PolytrisGame = /** @class */ (function () {
-    function PolytrisGame(gridWidth, gridHeight, polySize) {
-        var _this = this;
+    }
+}
+class PolytrisGame {
+    constructor(gridWidth, gridHeight, polySize) {
         this.logicTicks = 53;
         this.currentTick = 0;
         this.linesCleared = 0;
         this.score = 0;
         this.level = 0;
         this.paused = false;
-        this.tick = function () {
-            if (!_this.paused && _this.currentTick % _this.logicTicks == 0) {
-                if (!_this.moveCurrentPiece(0, 1)) {
-                    for (var i = 0; i < _this.currentPiece.length; i++) {
-                        _this.gameGrid[_this.currentPiece.blocks[i].x][_this.currentPiece.blocks[i].y] = _this.currentPiece.createPolyColor();
+        this.tick = () => {
+            if (!this.paused && this.currentTick % this.logicTicks == 0) {
+                if (!this.moveCurrentPiece(0, 1)) {
+                    for (var i = 0; i < this.currentPiece.length; i++) {
+                        this.gameGrid[this.currentPiece.blocks[i].x][this.currentPiece.blocks[i].y] = this.currentPiece.createPolyColor();
                     }
-                    _this.checkLines();
-                    _this.currentPiece = _this.nextPiece;
+                    this.checkLines();
+                    this.currentPiece = this.nextPiece;
                     // translate piece to middle of the grid
-                    if (!_this.moveCurrentPiece(_this.gridWidth / 2, 0)) {
+                    if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
                         // game over 
                         var name = prompt("Game over. What is your name?", "");
                         if (name) {
@@ -130,9 +124,9 @@ var PolytrisGame = /** @class */ (function () {
                                 url: "https://cors-anywhere.herokuapp.com/http://scores.richteaman.com/api/score",
                                 headers: {
                                     "name": name,
-                                    "lines": _this.linesCleared.toString(10),
-                                    "points": _this.score.toString(10),
-                                    "blocks": _this.polySize.toString(10)
+                                    "lines": this.linesCleared.toString(10),
+                                    "points": this.score.toString(10),
+                                    "blocks": this.polySize.toString(10)
                                 },
                                 method: "POST"
                             }).done(function () {
@@ -140,37 +134,37 @@ var PolytrisGame = /** @class */ (function () {
                             });
                         }
                     }
-                    _this.nextPiece = _this.spawnPiece();
+                    this.nextPiece = this.spawnPiece();
                 }
             }
-            _this.render(_this.mainGtx, _this.gameGrid, _this.currentPiece);
-            var previewPiece = _this.nextPiece.clonePoly();
+            this.render(this.mainGtx, this.gameGrid, this.currentPiece);
+            var previewPiece = this.nextPiece.clonePoly();
             for (var i = 0; i < previewPiece.blocks.length; i++) {
                 var block = previewPiece.blocks[i];
-                block.x += previewPiece.blocks.length;
-                block.y += previewPiece.blocks.length;
+                block.x += (previewPiece.blocks.length / 2) - 1;
+                block.y += (previewPiece.blocks.length / 2) - 1;
             }
-            _this.render(_this.previewGtx, _this.createGrid(_this.nextPiece.length, _this.nextPiece.length), previewPiece);
-            var statusElement = document.getElementById("status");
-            if (_this.paused) {
+            this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), previewPiece);
+            const statusElement = document.getElementById("status");
+            if (this.paused) {
                 statusElement.innerHTML = "Paused";
             }
             else {
                 statusElement.innerHTML = "";
             }
-            var linesClearedElement = document.getElementById("lines_cleared");
+            const linesClearedElement = document.getElementById("lines_cleared");
             if (linesClearedElement) {
-                linesClearedElement.innerHTML = _this.linesCleared.toString();
+                linesClearedElement.innerHTML = this.linesCleared.toString();
             }
-            var scoreElement = document.getElementById("score");
+            const scoreElement = document.getElementById("score");
             if (scoreElement) {
-                scoreElement.innerHTML = _this.score.toString();
+                scoreElement.innerHTML = this.score.toString();
             }
-            var levelElement = document.getElementById("level");
+            const levelElement = document.getElementById("level");
             if (levelElement) {
-                levelElement.innerHTML = _this.level.toString();
+                levelElement.innerHTML = this.level.toString();
             }
-            _this.currentTick++;
+            this.currentTick++;
         };
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
@@ -178,8 +172,7 @@ var PolytrisGame = /** @class */ (function () {
         this.gameGrid = this.createGrid(this.gridWidth, this.gridHeight);
         this.polySize = polySize;
     }
-    PolytrisGame.prototype.createPolyominoes = function (n) {
-        var _this = this;
+    createPolyominoes(n) {
         // create origin point
         var polys = new Array();
         var block = new Block(0, 0);
@@ -204,18 +197,18 @@ var PolytrisGame = /** @class */ (function () {
                 }
             }
         }
-        resultPolys.forEach(function (poly) {
-            _this.centerPoly(poly);
+        resultPolys.forEach(poly => {
+            this.centerPoly(poly);
         });
         return resultPolys;
-    };
-    PolytrisGame.prototype.centerPoly = function (poly) {
+    }
+    centerPoly(poly) {
         // find middle block
         var maxX = 0;
         var minX = 100000;
         var maxY = 0;
         var minY = 100000;
-        poly.blocks.forEach(function (block) {
+        poly.blocks.forEach(block => {
             if (block.x > maxX) {
                 maxX = block.x;
             }
@@ -231,12 +224,12 @@ var PolytrisGame = /** @class */ (function () {
         });
         var middleX = Math.floor((maxX - minX) / 2);
         var middleY = Math.floor((maxY - minY) / 2);
-        poly.blocks.forEach(function (block) {
+        poly.blocks.forEach(block => {
             block.x -= middleX;
             block.y -= middleY;
         });
-    };
-    PolytrisGame.prototype.normalisePoly = function (poly) {
+    }
+    normalisePoly(poly) {
         // find most negative x and y
         var negX = 0;
         var negY = 0;
@@ -269,8 +262,8 @@ var PolytrisGame = /** @class */ (function () {
             poly.blocks[i].x -= Math.abs(smallX);
             poly.blocks[i].y -= Math.abs(smallY);
         }
-    };
-    PolytrisGame.prototype.attemptToGrowPoly = function (poly, block, hashes, resultPolys) {
+    }
+    attemptToGrowPoly(poly, block, hashes, resultPolys) {
         // check if block already exists in poly
         for (var i = 0; i < poly.length; i++) {
             // existing block
@@ -296,15 +289,15 @@ var PolytrisGame = /** @class */ (function () {
                 this.normalisePoly(newPoly);
             }
         }
-        newHashes.forEach(function (hash, i, _newHashes) {
+        newHashes.forEach((hash, i, _newHashes) => {
             hashes.add(hash);
         });
         if (addPoly) {
             resultPolys.add(newPoly);
         }
         return addPoly;
-    };
-    PolytrisGame.prototype.expandPolys = function (startPolys, hashes) {
+    }
+    expandPolys(startPolys, hashes) {
         var resultPolys = new Set(startPolys);
         // iterate through all polys
         for (var p = 0; p < startPolys.length; p++) {
@@ -324,16 +317,16 @@ var PolytrisGame = /** @class */ (function () {
             }
         }
         return Array.from(resultPolys);
-    };
-    PolytrisGame.prototype.getHashPolyomino = function (poly) {
+    }
+    getHashPolyomino(poly) {
         var blockHashes = new Set();
         for (var i = 0; i < poly.length; i++) {
             var polyHash = JSON.stringify(poly.blocks[i]);
             blockHashes.add(polyHash);
         }
         return JSON.stringify(Array.from(blockHashes).sort());
-    };
-    PolytrisGame.prototype.createGrid = function (width, height) {
+    }
+    createGrid(width, height) {
         var gameGrid = new Array(width);
         for (var i = 0; i < width; i++) {
             gameGrid[i] = new Array(height);
@@ -342,20 +335,20 @@ var PolytrisGame = /** @class */ (function () {
             }
         }
         return gameGrid;
-    };
-    PolytrisGame.prototype.spawnPiece = function () {
+    }
+    spawnPiece() {
         var pieceId = getRandomInt(0, this.pieces.length);
         var piece = this.pieces[pieceId];
         var newPiece = piece.clonePoly();
         return newPiece;
-    };
+    }
     /**
      * Renders the given grid on the given context with the given active piece.
      * @param {*} gtx
      * @param {any[][]} grid
      * @param {any[]} activePiece
      */
-    PolytrisGame.prototype.render = function (gtx, grid, activePiece) {
+    render(gtx, grid, activePiece) {
         var cellWidth = Math.floor(gtx.canvas.width / grid.length);
         var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
         gtx.fillStyle = "#FFFFFF";
@@ -377,7 +370,7 @@ var PolytrisGame = /** @class */ (function () {
         for (var i = 0; i < activePiece.length; i++) {
             gtx.fillRect(activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight);
         }
-    };
+    }
     /**
      * Return true if move was possible, other false.
      *
@@ -385,7 +378,7 @@ var PolytrisGame = /** @class */ (function () {
      * @argument yMod {number} Change in y position.
      * @returns {boolean}
      */
-    PolytrisGame.prototype.moveCurrentPiece = function (xMod, yMod) {
+    moveCurrentPiece(xMod, yMod) {
         var canMovePiece = true;
         for (var i = 0; i < this.currentPiece.length; i++) {
             var x = this.currentPiece.blocks[i].x + xMod;
@@ -405,14 +398,14 @@ var PolytrisGame = /** @class */ (function () {
             }
         }
         return canMovePiece;
-    };
-    PolytrisGame.prototype.calculateLineClearedBonus = function (linesCleared) {
+    }
+    calculateLineClearedBonus(linesCleared) {
         var base = (this.level + 1) * 25;
         var bonus = base * Math.pow(3.5, linesCleared - 1);
         bonus = Math.floor(bonus);
         return bonus;
-    };
-    PolytrisGame.prototype.calculateLevelUp = function () {
+    }
+    calculateLevelUp() {
         var earnedLevel = Math.floor(this.linesCleared / 10);
         if (earnedLevel > 20) {
             earnedLevel = 20;
@@ -489,8 +482,8 @@ var PolytrisGame = /** @class */ (function () {
             }
             this.currentTick = 0;
         }
-    };
-    PolytrisGame.prototype.checkLines = function () {
+    }
+    checkLines() {
         var linesAdded = 0;
         var addedLineCount = this.gridHeight - 1;
         var newGameGrid = this.createGrid(this.gridWidth, this.gridHeight);
@@ -518,11 +511,11 @@ var PolytrisGame = /** @class */ (function () {
         this.linesCleared += linesAdded;
         this.gameGrid = newGameGrid;
         this.calculateLevelUp();
-    };
+    }
     /**
      * Rotates the current piece clockwise. Returns true if the move was possible.
      */
-    PolytrisGame.prototype.rotateCurrentPieceClockwise = function () {
+    rotateCurrentPieceClockwise() {
         var clone = this.currentPiece.rotateClockwise();
         var canMovePiece = true;
         for (var i = 0; i < clone.length; i++) {
@@ -534,11 +527,11 @@ var PolytrisGame = /** @class */ (function () {
             this.currentPiece = clone;
         }
         return canMovePiece;
-    };
+    }
     /**
      * Rotates the current piece anticlockwise. Returns true if the move was possible.
      */
-    PolytrisGame.prototype.rotateCurrentPieceAntiClockwise = function () {
+    rotateCurrentPieceAntiClockwise() {
         var clone = this.currentPiece.rotateAntiClockwise();
         var canMovePiece = true;
         for (var i = 0; i < clone.length; i++) {
@@ -550,17 +543,16 @@ var PolytrisGame = /** @class */ (function () {
             this.currentPiece = clone;
         }
         return canMovePiece;
-    };
-    PolytrisGame.prototype.startGame = function () {
+    }
+    startGame() {
         this.mainGtx = document.getElementById("gtx").getContext("2d");
         this.previewGtx = document.getElementById("preview_gtx").getContext("2d");
         this.currentPiece = this.spawnPiece();
         this.moveCurrentPiece(this.gridWidth / 2, 0);
         this.nextPiece = this.spawnPiece();
         setInterval(this.tick, 17);
-    };
-    return PolytrisGame;
-}());
+    }
+}
 /**
  * Gets an integer between the given values. Maximum is exclusive and the minimum is inclusive.
  * @argument min {number} Minimum number.

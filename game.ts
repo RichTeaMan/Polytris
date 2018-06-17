@@ -469,8 +469,8 @@ class PolytrisGame {
         var previewPiece = this.nextPiece.clonePoly();
         for(var i = 0; i < previewPiece.blocks.length; i++) {
             var block = previewPiece.blocks[i];
-            block.x += previewPiece.blocks.length;
-            block.y += previewPiece.blocks.length;
+            block.x += (previewPiece.blocks.length/2) - 1;
+            block.y += (previewPiece.blocks.length/2) - 1;
         }
         this.render(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), previewPiece);
 
