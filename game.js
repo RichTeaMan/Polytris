@@ -617,6 +617,9 @@ class PolytrisGame {
         this.gameGrid = newGameGrid;
         this.calculateLevelUp();
     }
+    dropPiece() {
+        while (this.moveCurrentPiece(0, 1)) { }
+    }
     /**
      * Rotates the current piece clockwise. Returns true if the move was possible.
      */

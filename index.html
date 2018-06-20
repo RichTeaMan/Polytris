@@ -8,11 +8,22 @@
 
 <body>
     <div id="main">
-        <h1><a href="/Polytris">Polytris</a></h1>
-        <div><p>Polytris is a version of Tetris that has polyominoes made of n sized blocks.</p></div>
-        <div class="emphasis"><p><a href="preview.html">View all pieces</a>&nbsp;<a href="highscores.html">View high scores</a></p></div>
+        <h1>
+            <a href="/Polytris">Polytris</a>
+        </h1>
+        <div>
+            <p>Polytris is a version of Tetris that has polyominoes made of n sized blocks.</p>
+        </div>
+        <div class="emphasis">
+            <p>
+                <a href="preview.html">View all pieces</a>&nbsp;
+                <a href="highscores.html">View high scores</a>
+            </p>
+        </div>
         <div id="game_links"></div>
-        <div><p>Move pieces with the arrow keys. Rotate with Z and X. Pause with the P key.</p></div>
+        <div>
+            <p>Move pieces with the arrow keys. Rotate with Z and X. Pause with the P key.</p>
+        </div>
         <div id="status"></div>
         <div id="game_row">
             <div class="game_container main_container container">
@@ -25,17 +36,17 @@
                 </div>
                 <div class="info_panel">
                     <p>Level:</p>
-                    <p id="level" class="right-align" ></p>
+                    <p id="level" class="right-align"></p>
                 </div>
                 <div class="info_panel">
                     <p>Lines:</p>
-                    <p id="lines_cleared" class="right-align" ></p>
+                    <p id="lines_cleared" class="right-align"></p>
                 </div>
                 <div class="game_container preview_container">
                     <canvas id="preview_gtx" width="160" height="160"></canvas>
                 </div>
             </div>
-    </div>
+        </div>
     </div>
     <script src="game.js"></script>
     <script>
@@ -66,7 +77,7 @@
             if (!game.paused && !game.gameOver && game.removingLinesFrames == 0) {
                 // up
                 if (key == 38) {
-
+                    game.dropPiece();
                 }
                 // down
                 else if (key == 40) {
@@ -93,7 +104,9 @@
             if (key == 80) {
                 game.paused = !game.paused;
             }
-            game.moveCurrentPiece(xMod, yMod);
+            if (xMod != 0 || yMod != 0) {
+                game.moveCurrentPiece(xMod, yMod);
+            }
         }
     </script>
 </body>
