@@ -154,21 +154,7 @@ class PolytrisGame {
                 }
             }
             else if (!this.gameOver && !this.paused && this.currentTick % this.logicTicks == 0) {
-                if (!this.moveCurrentPiece(0, 1)) {
-                    for (var i = 0; i < this.currentPiece.length; i++) {
-                        this.gameGrid[this.currentPiece.blocks[i].x][this.currentPiece.blocks[i].y] = this.currentPiece.createPolyColor();
-                    }
-                    this.checkLines();
-                    this.currentPiece = this.nextPiece;
-                    // translate piece to middle of the grid
-                    if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
-                        // game over handled by next tick so a render can happen.
-                        this.gameOver = true;
-                    }
-                    else {
-                        this.nextPiece = this.spawnPiece();
-                    }
-                }
+                this.tickPiece();
             }
             this.renderGame(this.mainGtx, this.gameGrid, this.currentPiece);
             this.renderPreview(this.previewGtx, this.createGrid(this.nextPiece.length, this.nextPiece.length), this.nextPiece.createPreviewPiece());
@@ -477,6 +463,23 @@ class PolytrisGame {
         }
         return canMovePiece;
     }
+    tickPiece() {
+        if (!this.moveCurrentPiece(0, 1)) {
+            for (var i = 0; i < this.currentPiece.length; i++) {
+                this.gameGrid[this.currentPiece.blocks[i].x][this.currentPiece.blocks[i].y] = this.currentPiece.createPolyColor();
+            }
+            this.checkLines();
+            this.currentPiece = this.nextPiece;
+            // translate piece to middle of the grid
+            if (!this.moveCurrentPiece(this.gridWidth / 2, 0)) {
+                // game over handled by next tick so a render can happen.
+                this.gameOver = true;
+            }
+            else {
+                this.nextPiece = this.spawnPiece();
+            }
+        }
+    }
     writeStatus(message) {
         const statusElement = document.getElementById("status");
         if (statusElement) {
@@ -619,6 +622,7 @@ class PolytrisGame {
     }
     dropPiece() {
         while (this.moveCurrentPiece(0, 1)) { }
+        this.tickPiece();
     }
     /**
      * Rotates the current piece clockwise. Returns true if the move was possible.
