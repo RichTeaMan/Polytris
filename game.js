@@ -120,6 +120,8 @@ class PolytrisGame {
         this.gameOverPromptShown = false;
         this.removingLinesFrames = 0;
         this.linesToRemove = null;
+        this.pauseText = "Paused";
+        this.gameOverText = "Game Over";
         /** The total number of frames to remove lines for. */
         this.removingLinesFramesDelay = 50;
         this.tick = () => {
@@ -408,14 +410,18 @@ class PolytrisGame {
             gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
             gtx.font = "30px PressStart2P";
             gtx.fillStyle = "#FFFFFF";
-            gtx.fillText("Game over", 70, gtx.canvas.height / 2);
+            var gameOverTextWidth = gtx.measureText(this.gameOverText).width;
+            var gameOverTextXpos = (gtx.canvas.width / 2) - (gameOverTextWidth / 2);
+            gtx.fillText(this.gameOverText, gameOverTextXpos, gtx.canvas.height / 2);
         }
         else if (this.paused) {
             gtx.fillStyle = "#000000";
             gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
             gtx.font = "30px PressStart2P";
             gtx.fillStyle = "#FFFFFF";
-            gtx.fillText("Paused", 105, gtx.canvas.height / 2);
+            var pauseTextWidth = gtx.measureText(this.pauseText).width;
+            var pauseTextXpos = (gtx.canvas.width / 2) - (pauseTextWidth / 2);
+            gtx.fillText(this.pauseText, pauseTextXpos, gtx.canvas.height / 2);
         }
     }
     /**
