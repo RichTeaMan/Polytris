@@ -403,8 +403,8 @@ class PolytrisGame {
      */
     renderGame(gtx: CanvasRenderingContext2D, grid: any[], activePiece: Poly) {
 
-        var cellWidth = Math.floor(gtx.canvas.width / grid.length);
-        var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
+        var cellWidth = gtx.canvas.width / grid.length;
+        var cellHeight = gtx.canvas.height / grid[0].length;
 
         gtx.fillStyle = "#FFFFFF";
 
@@ -413,21 +413,24 @@ class PolytrisGame {
         var height = grid[0].length;
 
         for (var i = 0; i < width; i++) {
+
+            var xPos = Math.floor(i * cellWidth);
+
             for (var j = 0; j < height; j++) {
+
+                var yPos = Math.floor(j * cellHeight);
+
                 if (grid[i][j] === 0) {
                     gtx.fillStyle = "#FFFFFF";
-                    gtx.fillRect(i * cellWidth, j * cellHeight, cellWidth, cellHeight);
+                    gtx.fillRect(xPos, yPos, cellWidth, cellHeight);
                 } else {
                     var blockColour: string = grid[i][j];
-                    this.renderBlock(gtx, i * cellWidth, j * cellHeight, cellWidth, cellHeight, blockColour);
+                    this.renderBlock(gtx, xPos, yPos, cellWidth, cellHeight, blockColour);
                 }
             }
         }
 
         if (this.removingLinesFrames > 0) {
-
-            var cellWidth = Math.floor(gtx.canvas.width / grid.length);
-            var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
 
             if (Math.floor(this.removingLinesFrames / 5) % 2 == 0) {
                 gtx.fillStyle = "#CCCC00";
@@ -772,10 +775,14 @@ class PolytrisGame {
         return canMovePiece;
     }
 
-    startGame() {
-
+    rebuildGtx() {
         this.mainGtx = (<HTMLCanvasElement>document.getElementById("gtx")).getContext("2d");
         this.previewGtx = (<HTMLCanvasElement>document.getElementById("preview_gtx")).getContext("2d");
+
+    }
+
+    startGame() {
+        this.rebuildGtx();
         this.currentPiece = this.spawnPiece();
         this.moveCurrentPiece(this.gridWidth / 2, 0);
         this.nextPiece = this.spawnPiece();

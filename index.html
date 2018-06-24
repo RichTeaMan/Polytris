@@ -54,6 +54,7 @@
     <script src="game.js"></script>
     <script>
 
+
         var links = "Poly size: ";
         for (var i = 1; i < 10; i++) {
             links += `<a href="${window.location.pathname}?polySize=${i}">${i}</a>`
@@ -70,6 +71,23 @@
         var game = new PolytrisGame(10, 18, polySize);
         game.startGame();
 
+        function resize() {
+            var currentCanvasHeight = $("#game_row").height();
+
+            var blockLength = currentCanvasHeight / game.gridHeight;
+            var rem = blockLength % 2;
+            //blockLength -= rem;
+
+            var gameHeight = blockLength * game.gridHeight;
+            var gameWidth = blockLength * game.gridWidth;
+
+            console.log(`width: ${gameWidth} - height: ${gameHeight}`);
+            $("#gtx").attr("height", gameHeight);
+            $("#gtx").attr("width", gameWidth);
+            game.rebuildGtx();
+        };
+        window.onresize = resize;
+        resize();
 
         window.onkeydown = function (e) {
             var key = e.keyCode ? e.keyCode : e.which;
