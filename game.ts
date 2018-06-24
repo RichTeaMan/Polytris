@@ -444,7 +444,11 @@ class PolytrisGame {
         } else {
             var colour = activePiece.createPolyColor();
             for (var i = 0; i < activePiece.length; i++) {
-                this.renderBlock(gtx, activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight, colour);
+
+                var xPos = Math.floor(activePiece.blocks[i].x * cellWidth);
+                var yPos = Math.floor(activePiece.blocks[i].y * cellHeight);
+
+                this.renderBlock(gtx, xPos, yPos, cellWidth, cellHeight, colour);
             }
         }
 
