@@ -3,7 +3,7 @@
 <head>
     <title>Polytris</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="jquery-3.3.1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 </head>
 
 <body>
@@ -51,7 +51,10 @@
             </div>
         </div>
     </div>
-    <script src="game.js"></script>
+    <script src="src/utilities.js"></script>
+    <script src="src/poly.js"></script>
+    <script src="src/pieceGenerator.js"></script>
+    <script src="src/game.js"></script>
     <script>
 
 
@@ -68,15 +71,15 @@
             polySize = 4;
         }
 
-        var game = new PolytrisGame(10, 18, polySize);
+        var pieces = new PieceGenerator().createPolyominoes(polySize);
+
+        var game = new PolytrisGame(10, 18, pieces);
         game.startGame();
 
         function resize() {
             var currentCanvasHeight = $("#game_row").height();
 
             var blockLength = currentCanvasHeight / game.gridHeight;
-            var rem = blockLength % 2;
-            //blockLength -= rem;
 
             var gameHeight = blockLength * game.gridHeight;
             var gameWidth = blockLength * game.gridWidth;

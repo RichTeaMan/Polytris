@@ -3,7 +3,7 @@
 <head>
     <title>Polytris</title>
     <link rel="stylesheet" href="style.css" />
-    <script src="jquery-3.3.1.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 </head>
 
 <body>
@@ -24,7 +24,10 @@
             </table>
         </div>
     </div>
-    <script src="game.js"></script>
+    <script src="src/utilities.js"></script>
+    <script src="src/poly.js"></script>
+    <script src="src/pieceGenerator.js"></script>
+    <script src="src/game.js"></script>
     <script>
         // get highscores
         $.get("https://cors-anywhere.herokuapp.com/http://scores.richteaman.com/api/score/uniqueName").done(function (scores) {
