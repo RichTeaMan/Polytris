@@ -64,14 +64,14 @@
         var previewElement = document.getElementById("previews");
         var canvases = "";
         for (var i = 0; i < pieces.length; i++) {
-            var hash = game.getHashPolyomino(pieces[i]);
-            var colour = game.pieces[i].createPolyColor();
+            var hash = pieces[i].getHash();
+            var colour = pieces[i].createPolyColor();
             canvases += `<div class="preview_page_container"><div class="small_text">Piece ${i}:</div><canvas id="preview_gtx_${i}" width="160" height="160"></canvas><div class="hash small_text">${hash}</div><div class="colour small_text">${colour}</div></div>`;
         }
         previewElement.innerHTML = canvases;
         for (var i = 0; i < pieces.length; i++) {
             var previewGtx = document.getElementById(`preview_gtx_${i}`).getContext("2d");
-            game.renderPreview(previewGtx, game.createGrid(pieces[i].length, pieces[i].length), pieces[i].createPreviewPiece());
+            PolytrisGame.renderPreview(previewGtx, PolytrisGame.createGrid(pieces[i].length, pieces[i].length), pieces[i].createPreviewPiece());
         }
 
         var endTime = new Date().getTime();
