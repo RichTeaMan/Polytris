@@ -99,8 +99,8 @@
             var yMod = 0;
 
             if (!game.paused && !game.gameOver && game.removingLinesFrames == 0) {
-                // up
-                if (key == 38) {
+                // up or space
+                if (key == 38 || key == 32) {
                     game.dropPiece();
                 }
                 // down
