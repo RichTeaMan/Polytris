@@ -12,21 +12,21 @@ function getRandomInt(min: number, max: number) {
 }
 
 function getQueryParam(name: String): String | boolean {
-    var results = new RegExp('[\?&]' + name + '=([^&#]*)')
+    const results = new RegExp("[\?&]" + name + "=([^&#]*)")
         .exec(window.location.search);
 
     return (results && results[1]) || false;
 }
 
-var entityMap: any = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-    '/': '&#x2F;',
-    '`': '&#x60;',
-    '=': '&#x3D;'
+const entityMap: any = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;",
+    "/": "&#x2F;",
+    "`": "&#x60;",
+    "=": "&#x3D;"
 };
 
 function escapeHtml(value: string) {

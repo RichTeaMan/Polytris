@@ -16,11 +16,11 @@ class Poly {
 
     constructor() {
         this.blocks = new Array<Block>();
-        this._hashCode = null;
+        this._hashCode = undefined;
     }
 
     static fromBlocks(blocks: Block[]): Poly {
-        var poly = new Poly();
+        const poly = new Poly();
         poly.blocks = blocks;
         return poly;
     }
@@ -31,31 +31,31 @@ class Poly {
 
     clonePoly(): Poly {
         // ensure current piece is deeply cloned
-        var cloneBlocks = new Array<Block>(this.length);
-        for (var i = 0; i < this.length; i++) {
-            var block = new Block(this.blocks[i].x, this.blocks[i].y);
+        const cloneBlocks = new Array<Block>(this.length);
+        for (let i = 0; i < this.length; i++) {
+            const block = new Block(this.blocks[i].x, this.blocks[i].y);
             cloneBlocks[i] = block;
         }
-        var clone = new Poly();
+        const clone = new Poly();
         clone.blocks = cloneBlocks;
         clone._hashCode = this.getHashCode();
         return clone;
     }
 
     createArray(): Poly[] {
-        var polyArray = new Array<Poly>();
+        const polyArray = new Array<Poly>();
         polyArray.push(this);
         return polyArray;
     }
 
     rotateClockwise(): Poly {
 
-        var clone = this.clonePoly();
+        const clone = this.clonePoly();
 
         // rotate about the first block
-        for (var i = 1; i < clone.length; i++) {
-            var x = clone.blocks[i].x - clone.blocks[0].x;
-            var y = clone.blocks[i].y - clone.blocks[0].y;
+        for (let i = 1; i < clone.length; i++) {
+            const x = clone.blocks[i].x - clone.blocks[0].x;
+            const y = clone.blocks[i].y - clone.blocks[0].y;
             clone.blocks[i].x = -y + clone.blocks[0].x;
             clone.blocks[i].y = x + clone.blocks[0].y;
         }
@@ -64,11 +64,11 @@ class Poly {
 
     rotateAntiClockwise(): Poly {
 
-        var clone = this.clonePoly();
+        const clone = this.clonePoly();
 
-        for (var i = 1; i < clone.length; i++) {
-            var x = clone.blocks[i].x - clone.blocks[0].x;
-            var y = clone.blocks[i].y - clone.blocks[0].y;
+        for (let i = 1; i < clone.length; i++) {
+            const x = clone.blocks[i].x - clone.blocks[0].x;
+            const y = clone.blocks[i].y - clone.blocks[0].y;
             clone.blocks[i].x = y + clone.blocks[0].x;
             clone.blocks[i].y = -x + clone.blocks[0].y;
         }
@@ -76,18 +76,17 @@ class Poly {
     }
 
     /**
-     * Creates a hex string colour for a given poly. The colour will be
+     * Creates a hex string colour for the poly. The colour will be
      * consistent as the poly moves and rotates.
-     * @param poly 
      */
     createPolyColor(): string {
-        var hashCode = this.getHashCode();
-        var color = Math.abs(hashCode);
-        var limit = 13777215;
+        const hashCode = this.getHashCode();
+        let color = Math.abs(hashCode);
+        const limit = 13777215;
         if (color > limit) {
             color = color % limit;
         }
-        var code = color.toString(16);
+        let code = color.toString(16);
         while (code.length < 6) {
             code = "0" + code;
         }
@@ -95,9 +94,9 @@ class Poly {
     }
 
     createPreviewPiece(): Poly {
-        var previewPiece = this.clonePoly();
-        for (var i = 0; i < previewPiece.blocks.length; i++) {
-            var block = previewPiece.blocks[i];
+        const previewPiece = this.clonePoly();
+        for (let i = 0; i < previewPiece.blocks.length; i++) {
+            const block = previewPiece.blocks[i];
             block.x += Math.floor(previewPiece.blocks.length / 2) - 1;
             block.y += Math.floor(previewPiece.blocks.length / 2) - 1;
         }
@@ -105,9 +104,9 @@ class Poly {
     }
 
     getHash(): String {
-        var blockHashes = new Array();
-        for (var i = 0; i < this.length; i++) {
-            var polyHash = JSON.stringify(this.blocks[i]);
+        const blockHashes = new Array();
+        for (let i = 0; i < this.length; i++) {
+            const polyHash = JSON.stringify(this.blocks[i]);
             blockHashes.push(polyHash);
         }
         return JSON.stringify(Array.from(blockHashes).sort());
@@ -117,11 +116,11 @@ class Poly {
 
         if (this._hashCode === null) {
 
-            var hashCode = 0;
-            var hashStr = this.getHash();
+            let hashCode = 0;
+            const hashStr = this.getHash();
             if (hashStr.length == 0) return hashCode;
-            for (var i = 0; i < hashStr.length; i++) {
-                var char = hashStr.charCodeAt(i);
+            for (let i = 0; i < hashStr.length; i++) {
+                const char = hashStr.charCodeAt(i);
                 hashCode = ((hashCode << 5) - hashCode) + char;
                 hashCode = hashCode & hashCode; // Convert to 32bit integer
             }

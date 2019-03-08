@@ -1,4 +1,4 @@
-//import * as $ from "jquery";
+// import * as $ from "jquery";
 
 class PolytrisGame {
 
@@ -24,7 +24,7 @@ class PolytrisGame {
     nextPiece: Poly;
 
     removingLinesFrames = 0;
-    linesToRemove: number[] = null;
+    linesToRemove: number[] = undefined;
 
     pauseText = "Paused";
     gameOverText = "Game Over";
@@ -36,15 +36,15 @@ class PolytrisGame {
 
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
-        this.pieces = pieces
+        this.pieces = pieces;
         this.gameGrid = PolytrisGame.createGrid(this.gridWidth, this.gridHeight);
     }
 
     static createGrid(width: number, height: number): string[][] {
-        var gameGrid = new Array(width);
-        for (var i = 0; i < width; i++) {
+        const gameGrid = new Array(width);
+        for (let i = 0; i < width; i++) {
             gameGrid[i] = new Array(height);
-            for (var j = 0; j < height; j++) {
+            for (let j = 0; j < height; j++) {
                 gameGrid[i][j] = 0;
             }
         }
@@ -52,17 +52,17 @@ class PolytrisGame {
     }
 
     spawnPiece(): Poly {
-        var pieceId = getRandomInt(0, this.pieces.length);
-        var piece = this.pieces[pieceId];
+        const pieceId = getRandomInt(0, this.pieces.length);
+        const piece = this.pieces[pieceId];
 
-        var newPiece = piece.clonePoly();
+        const newPiece = piece.clonePoly();
 
         return newPiece;
     }
 
     static renderBlock(gtx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, colour: string) {
 
-        var margin = 2;
+        const margin = 2;
 
         gtx.fillStyle = colour;
         gtx.fillRect(x, y, width, height);
@@ -75,34 +75,34 @@ class PolytrisGame {
 
     /**
      * Renders the given grid on the given context with the given active piece as a game.
-     * @param {*} gtx 
-     * @param {any[][]} grid 
+     * @param {*} gtx
+     * @param {any[][]} grid
      * @param {any[]} activePiece
      */
     renderGame(gtx: CanvasRenderingContext2D, grid: any[], activePiece: Poly) {
 
-        var cellWidth = gtx.canvas.width / grid.length;
-        var cellHeight = gtx.canvas.height / grid[0].length;
+        const cellWidth = gtx.canvas.width / grid.length;
+        const cellHeight = gtx.canvas.height / grid[0].length;
 
         gtx.fillStyle = "#FFFFFF";
 
         gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
-        var width = grid.length;
-        var height = grid[0].length;
+        const width = grid.length;
+        const height = grid[0].length;
 
-        for (var i = 0; i < width; i++) {
+        for (let i = 0; i < width; i++) {
 
-            var xPos = Math.floor(i * cellWidth);
+            const xPos = Math.floor(i * cellWidth);
 
-            for (var j = 0; j < height; j++) {
+            for (let j = 0; j < height; j++) {
 
-                var yPos = Math.floor(j * cellHeight);
+                const yPos = Math.floor(j * cellHeight);
 
                 if (grid[i][j] === 0) {
                     gtx.fillStyle = "#FFFFFF";
                     gtx.fillRect(xPos, yPos, cellWidth, cellHeight);
                 } else {
-                    var blockColour: string = grid[i][j];
+                    const blockColour: string = grid[i][j];
                     PolytrisGame.renderBlock(gtx, xPos, yPos, cellWidth, cellHeight, blockColour);
                 }
             }
@@ -120,11 +120,11 @@ class PolytrisGame {
                 gtx.fillStyle = "#000000";
             }
         } else {
-            var colour = activePiece.createPolyColor();
-            for (var i = 0; i < activePiece.length; i++) {
+            const colour = activePiece.createPolyColor();
+            for (let i = 0; i < activePiece.length; i++) {
 
-                var xPos = Math.floor(activePiece.blocks[i].x * cellWidth);
-                var yPos = Math.floor(activePiece.blocks[i].y * cellHeight);
+                const xPos = Math.floor(activePiece.blocks[i].x * cellWidth);
+                const yPos = Math.floor(activePiece.blocks[i].y * cellHeight);
 
                 PolytrisGame.renderBlock(gtx, xPos, yPos, cellWidth, cellHeight, colour);
             }
@@ -136,8 +136,8 @@ class PolytrisGame {
             gtx.font = "30px PressStart2P";
             gtx.fillStyle = "#FFFFFF";
 
-            var gameOverTextWidth = gtx.measureText(this.gameOverText).width;
-            var gameOverTextXpos = (gtx.canvas.width / 2) - (gameOverTextWidth / 2);
+            const gameOverTextWidth = gtx.measureText(this.gameOverText).width;
+            const gameOverTextXpos = (gtx.canvas.width / 2) - (gameOverTextWidth / 2);
 
             gtx.fillText(
                 this.gameOverText,
@@ -151,8 +151,8 @@ class PolytrisGame {
             gtx.font = "30px PressStart2P";
             gtx.fillStyle = "#FFFFFF";
 
-            var pauseTextWidth = gtx.measureText(this.pauseText).width;
-            var pauseTextXpos = (gtx.canvas.width / 2) - (pauseTextWidth / 2);
+            const pauseTextWidth = gtx.measureText(this.pauseText).width;
+            const pauseTextXpos = (gtx.canvas.width / 2) - (pauseTextWidth / 2);
 
             gtx.fillText(
                 this.pauseText,
@@ -163,39 +163,39 @@ class PolytrisGame {
 
     /**
      * Renders the given grid on the given context with the given active piece as a preview.
-     * @param {*} gtx 
-     * @param {any[][]} grid 
+     * @param {*} gtx
+     * @param {any[][]} grid
      * @param {any[]} activePiece
      */
     static renderPreview(gtx: CanvasRenderingContext2D, grid: any[], activePiece: Poly) {
-        var cellWidth = Math.floor(gtx.canvas.width / grid.length);
-        var cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
+        const cellWidth = Math.floor(gtx.canvas.width / grid.length);
+        const cellHeight = Math.floor(gtx.canvas.height / grid[0].length);
 
         gtx.fillStyle = "#FFFFFF";
 
         gtx.fillRect(0, 0, gtx.canvas.width, gtx.canvas.height);
-        var width = grid.length;
-        var height = grid[0].length;
+        const width = grid.length;
+        const height = grid[0].length;
 
-        var colour = activePiece.createPolyColor();
-        for (var i = 0; i < activePiece.length; i++) {
+        const colour = activePiece.createPolyColor();
+        for (let i = 0; i < activePiece.length; i++) {
             this.renderBlock(gtx, activePiece.blocks[i].x * cellWidth, activePiece.blocks[i].y * cellHeight, cellWidth, cellHeight, colour);
         }
     }
 
     /**
      * Return true if move was possible, other false.
-     * 
+     *
      * @argument xMod {number} Change in x position.
      * @argument yMod {number} Change in y position.
      * @returns {boolean}
      */
     moveCurrentPiece(xMod: number, yMod: number) {
 
-        var canMovePiece = true;
-        for (var i = 0; i < this.currentPiece.length; i++) {
-            var x = this.currentPiece.blocks[i].x + xMod;
-            var y = this.currentPiece.blocks[i].y + yMod;
+        let canMovePiece = true;
+        for (let i = 0; i < this.currentPiece.length; i++) {
+            const x = this.currentPiece.blocks[i].x + xMod;
+            let y = this.currentPiece.blocks[i].y + yMod;
             if (y < 0) {
                 y = 0;
             }
@@ -208,7 +208,7 @@ class PolytrisGame {
         }
 
         if (canMovePiece) {
-            for (var i = 0; i < this.currentPiece.length; i++) {
+            for (let i = 0; i < this.currentPiece.length; i++) {
                 this.currentPiece.blocks[i].y += yMod;
                 this.currentPiece.blocks[i].x += xMod;
             }
@@ -220,7 +220,7 @@ class PolytrisGame {
 
         if (this.gameOver && !this.gameOverPromptShown) {
             // game over handling
-            var name = prompt("Game over. What is your name?", "");
+            const name = prompt("Game over. What is your name?", "");
             this.gameOverPromptShown = true;
 
             if (name) {
@@ -279,7 +279,7 @@ class PolytrisGame {
     tickPiece() {
         if (!this.moveCurrentPiece(0, 1)) {
 
-            for (var i = 0; i < this.currentPiece.length; i++) {
+            for (let i = 0; i < this.currentPiece.length; i++) {
                 this.gameGrid[this.currentPiece.blocks[i].x][this.currentPiece.blocks[i].y] = this.currentPiece.createPolyColor();
             }
             this.checkLines();
@@ -303,16 +303,15 @@ class PolytrisGame {
     }
 
     calculateLineClearedBonus(linesCleared: number) {
-        var base = (this.level + 1) * 25;
+        const base = (this.level + 1) * 25;
 
-        var bonus = base * Math.pow(3.5, linesCleared - 1);
-        bonus = Math.floor(bonus);
+        const bonus = Math.floor(base * Math.pow(3.5, linesCleared - 1));
         return bonus;
     }
 
     calculateLevelUp() {
 
-        var earnedLevel = Math.floor(this.linesCleared / 10);
+        let earnedLevel = Math.floor(this.linesCleared / 10);
         if (earnedLevel > 20) {
             earnedLevel = 20;
         }
@@ -351,11 +350,11 @@ class PolytrisGame {
 
     checkLines() {
 
-        var removedLines = new Array<number>();
-        for (var j = this.gridHeight - 1; j >= 0; j--) {
+        const removedLines = new Array<number>();
+        for (let j = this.gridHeight - 1; j >= 0; j--) {
 
-            var clearLine = true;
-            for (var i = 0; i < this.gridWidth; i++) {
+            let clearLine = true;
+            for (let i = 0; i < this.gridWidth; i++) {
                 if (this.gameGrid[i][j] == 0) {
                     clearLine = false;
                     break;
@@ -378,13 +377,13 @@ class PolytrisGame {
 
     removeLines() {
 
-        var linesAdded = 0;
-        var addedLineCount = this.gridHeight - 1;
-        var newGameGrid = PolytrisGame.createGrid(this.gridWidth, this.gridHeight);
-        for (var j = this.gridHeight - 1; j >= 0; j--) {
+        let linesAdded = 0;
+        let addedLineCount = this.gridHeight - 1;
+        const newGameGrid = PolytrisGame.createGrid(this.gridWidth, this.gridHeight);
+        for (let j = this.gridHeight - 1; j >= 0; j--) {
 
-            var clearLine = true;
-            for (var i = 0; i < this.gridWidth; i++) {
+            let clearLine = true;
+            for (let i = 0; i < this.gridWidth; i++) {
                 if (this.gameGrid[i][j] == 0) {
                     clearLine = false;
                     break;
@@ -395,7 +394,7 @@ class PolytrisGame {
                 linesAdded++;
             }
             else {
-                for (var i = 0; i < this.gridWidth; i++) {
+                for (let i = 0; i < this.gridWidth; i++) {
                     newGameGrid[i][addedLineCount] = this.gameGrid[i][j];
                 }
                 addedLineCount--;
@@ -421,12 +420,12 @@ class PolytrisGame {
      */
     rotateCurrentPieceClockwise(): boolean {
 
-        var clone = this.currentPiece.rotateClockwise();
+        const clone = this.currentPiece.rotateClockwise();
 
-        var canMovePiece = true;
-        for (var i = 0; i < clone.length; i++) {
-            var x = clone.blocks[i].x;
-            var y = clone.blocks[i].y;
+        let canMovePiece = true;
+        for (let i = 0; i < clone.length; i++) {
+            const x = clone.blocks[i].x;
+            let y = clone.blocks[i].y;
             if (y < 0) {
                 y = 0;
             }
@@ -449,12 +448,12 @@ class PolytrisGame {
      */
     rotateCurrentPieceAntiClockwise(): boolean {
 
-        var clone = this.currentPiece.rotateAntiClockwise();
+        const clone = this.currentPiece.rotateAntiClockwise();
 
-        var canMovePiece = true;
-        for (var i = 0; i < clone.length; i++) {
-            var x = clone.blocks[i].x;
-            var y = clone.blocks[i].y;
+        let canMovePiece = true;
+        for (let i = 0; i < clone.length; i++) {
+            const x = clone.blocks[i].x;
+            let y = clone.blocks[i].y;
             if (y < 0) {
                 y = 0;
             }
