@@ -1,0 +1,21 @@
+pipeline {
+    agent { label "linux" }
+    
+    stages {
+        stage('Build image') { 
+            steps {
+                sh "sudo docker build -t polytris ."
+            }
+        }
+        stage('Remove old container') { 
+            steps {
+                sh (script: "sudo docker rm --force polytris", returnStatus: true)
+            }
+        }
+        stage('Build run container') { 
+            steps {
+                sh "sudo docker run -d -p 3000:3000 --name polytris --restart unless-stopped polytris"
+            }
+        }
+    }
+}
