@@ -11,9 +11,18 @@
     "tslint.autoFixOnSave": true,
     "tslint.exclude": "**/node_modules/**/*",
     "cSpell.words": [
+        "Licences",
         "Polytris",
+        "SAMEORIGIN",
+        "Tetris",
         "csrf",
         "definitelytyped",
-        "promisified"
+        "highscores",
+        "lusca",
+        "normalise",
+        "polyominoes",
+        "promisified",
+        "tetriminoes",
+        "xframe"
     ]
 }

@@ -1,5 +1,6 @@
+import { Poly, Block } from "./poly";
 
-class PieceGenerator {
+export class PieceGenerator {
 
     public createPolyominoes(polySize: number): Poly[] {
 

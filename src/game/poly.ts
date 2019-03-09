@@ -1,5 +1,5 @@
 
-class Block {
+export class Block {
     public x: number;
     public y: number;
 
@@ -9,10 +9,13 @@ class Block {
     }
 }
 
-class Poly {
+/**
+ * Poly !!!!.
+ */
+export class Poly {
     blocks: Array<Block>;
 
-    _hashCode: number;
+    _hashCode: number = 0;
 
     constructor() {
         this.blocks = new Array<Block>();
@@ -114,7 +117,7 @@ class Poly {
 
     getHashCode(): number {
 
-        if (this._hashCode === null) {
+        if (!this._hashCode) {
 
             let hashCode = 0;
             const hashStr = this.getHash();

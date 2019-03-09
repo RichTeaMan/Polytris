@@ -1,6 +1,8 @@
-// import * as $ from "jquery";
+import { Poly } from "./poly";
+import * as $ from "jquery";
+import { getRandomInt } from "./utilities";
 
-class PolytrisGame {
+export class PolytrisGame {
 
     gridWidth: number;
     gridHeight: number;
@@ -137,11 +139,11 @@ class PolytrisGame {
             gtx.fillStyle = "#FFFFFF";
 
             const gameOverTextWidth = gtx.measureText(this.gameOverText).width;
-            const gameOverTextXpos = (gtx.canvas.width / 2) - (gameOverTextWidth / 2);
+            const gameOverTextXPosition = (gtx.canvas.width / 2) - (gameOverTextWidth / 2);
 
             gtx.fillText(
                 this.gameOverText,
-                gameOverTextXpos,
+                gameOverTextXPosition,
                 gtx.canvas.height / 2);
 
         }
@@ -152,11 +154,11 @@ class PolytrisGame {
             gtx.fillStyle = "#FFFFFF";
 
             const pauseTextWidth = gtx.measureText(this.pauseText).width;
-            const pauseTextXpos = (gtx.canvas.width / 2) - (pauseTextWidth / 2);
+            const pauseTextXPosition = (gtx.canvas.width / 2) - (pauseTextWidth / 2);
 
             gtx.fillText(
                 this.pauseText,
-                pauseTextXpos,
+                pauseTextXPosition,
                 gtx.canvas.height / 2);
         }
     }

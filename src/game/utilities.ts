@@ -5,13 +5,13 @@
  * @argument max {number} Maximum number.
  * @returns {number}
  */
-function getRandomInt(min: number, max: number) {
+export function getRandomInt(min: number, max: number) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-function getQueryParam(name: String): String | boolean {
+export function getQueryParam(name: String): String | boolean {
     const results = new RegExp("[\?&]" + name + "=([^&#]*)")
         .exec(window.location.search);
 
