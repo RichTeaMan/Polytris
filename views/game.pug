@@ -5,9 +5,9 @@ block content
     p Move pieces with the arrow keys. Rotate with Z and X. Pause with the P key.
   div(id='status')
   div(id='game_row')
-    div(class='game_container main_container container')
+    div(class='game_container main_container p_container')
       canvas(id='gtx', width='350', height='630')
-    div(class='info_container container')
+    div(class='info_container p_container')
       div(class='info_panel')
         p Score:
         p(id='score', class='right-align')
@@ -19,7 +19,7 @@ block content
         p(id='lines_cleared', class='right-align')
       div(class='game_container preview_container')
         canvas(id='preview_gtx', width='140', height='140')
-    div(class='text_container container')
+    div(class='text_container p_container')
       div
         p Polytris is a version of Tetris that has polyominoes made of n sized blocks.
       div(class='emphasis')
@@ -52,7 +52,7 @@ block content
     game.startGame();
 
     function resize() {
-      var currentCanvasHeight = $('#game_row').height();
+      var currentCanvasHeight = $('#game_row').height() - 10;
 
       var blockLength = currentCanvasHeight / game.gridHeight;
 

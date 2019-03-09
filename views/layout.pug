@@ -8,24 +8,22 @@ html(lang='')
     meta(name='description', content='')
     meta(name='theme-color' content='#4DA5F4')
     meta(name='csrf-token', content=_csrf)
-    link(rel='shortcut icon', href='/images/favicon.png')
+    link(rel='shortcut icon', href='/images/favicon.ico')
     link(rel='stylesheet', href='/css/main.css')
-    link(rel='stylesheet', href='style.css')
     script(src='/js/lib/jquery-3.1.1.min.js')
 
   body
-    include partials/header
+    div(id='main')
+      include partials/header
 
-    .container
-      block content
+      .container
+        block content
 
-    include partials/footer
+      script(src='/js/lib/bootstrap.min.js')
+      script(async defer src="https://buttons.github.io/buttons.js")
+      script(src='/js/main.js')
 
-    script(src='/js/lib/bootstrap.min.js')
-    script(async defer src="https://buttons.github.io/buttons.js")
-    script(src='/js/main.js')
-
-    script.
-      window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
-      ga('create','UA-135922042-1','auto');ga('send','pageview')
-    script(src='https://www.google-analytics.com/analytics.js' async defer)
+      script.
+        window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date;
+        ga('create','UA-135922042-1','auto');ga('send','pageview')
+      script(src='https://www.google-analytics.com/analytics.js' async defer)
