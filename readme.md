@@ -4,6 +4,12 @@ This project implements a version of Tetris where tetriminoes can be made with n
 
 It can be played at https://richteaman.github.io/Polytris/.
 
+## Database
+
+```
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux:2017-latest
+```
+
 ## Licences
 
 Polytris is under the MIT licence.

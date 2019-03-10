@@ -6,6 +6,7 @@ import lusca from "lusca";
 import dotenv from "dotenv";
 import path from "path";
 import expressValidator from "express-validator";
+import "reflect-metadata";
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({ path: ".env.example" });

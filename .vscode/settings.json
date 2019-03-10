@@ -23,6 +23,7 @@
         "polyominoes",
         "promisified",
         "tetriminoes",
+        "typeorm",
         "xframe"
     ]
 }
