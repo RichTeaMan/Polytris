@@ -1,0 +1,21 @@
+{
+   "type": "mssql",
+   "host": "tomserver",
+   "port": 1433,
+   "username": "sa",
+   "password": "Password1*ggg",
+   "database": "Polytris",
+   "synchronize": true,
+   "logging": false,
+   "enabledDrivers": ["mssql"],
+   "entities": [
+      "src/entity/**/*.ts"
+   ],
+   "migrations": [
+      "src/migration/**/*.ts"
+   ],
+   "subscribers": [
+      "src/subscriber/**/*.ts"
+   ]
+ }
+ 

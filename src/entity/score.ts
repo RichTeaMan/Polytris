@@ -1,24 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, BaseEntity } from "typeorm";
 
-@Entity()
+@Entity("Score")
 export class Score {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn({ name: "Id" })
+    public id: number;
 
-    @Column()
-    name: string;
+    @Column({ name: "Name", length: "50" })
+    public name: string;
 
-    @Column()
-    submittedDate: Date;
+    @CreateDateColumn({ name: "SubmittedDate" })
+    public submittedDate: Date;
 
-    @Column()
-    score: number;
+    @Column({ name: "Score", type: "int" })
+    public score: number;
 
-    @Column()
-    lines: number;
+    @Column({ name: "Lines", type: "int" })
+    public lines: number;
 
-    @Column()
-    replay: string;
+    @Column({ name: "Replay", type: "ntext" })
+    public replay: string;
 
 }
