@@ -101,27 +101,27 @@
 
             if (!game.paused && !game.gameOver && game.removingLinesFrames == 0) {
                 // up or space
-                if (key == 38 || key == 32) {
+                if (key == 38 || key == 32 || key == 87) {
                     game.dropPiece();
                 }
                 // down
-                else if (key == 40) {
+                else if (key == 40 || key == 83) {
                     yMod++;
                 }
                 // left
-                else if (key == 37) {
+                else if (key == 37 || key == 65) {
                     xMod--;
                 }
                 // right
-                else if (key == 39) {
+                else if (key == 39 || key == 68) {
                     xMod++;
                 }
                 // X
-                else if (key == 88) {
+                else if (key == 88 || key == 69) {
                     game.rotateCurrentPieceClockwise();
                 }
                 // Z
-                else if (key == 90) {
+                else if (key == 90 || key == 81) {
                     game.rotateCurrentPieceAntiClockwise();
                 }
             }
