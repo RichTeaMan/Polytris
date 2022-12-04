@@ -1,20 +1,16 @@
 use std::hash::Hash;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct Block {
     pub x: i32,
     pub y: i32,
-
 }
 
 impl Block {
-
     pub fn new(x: i32, y: i32) -> Block {
-        Block {
-            x,y
-        }
+        Block { x, y }
     }
 }
 
@@ -23,11 +19,9 @@ pub struct Poly {
     pub blocks: Vec<Block>,
 
     _hashCode: i32,
-
 }
 
-impl Poly{
-
+impl Poly {
     pub fn from_blocks(blocks: Vec<Block>) -> Poly {
         Poly {
             blocks,
@@ -61,11 +55,10 @@ impl Poly{
     */
 
     pub fn rotateClockwise(&self) -> Poly {
-
         let mut clone = self.clone();
 
         // rotate about the first block
-        for  i in 1..clone.length() {
+        for i in 1..clone.length() {
             let x = clone.blocks[i].x - clone.blocks[0].x;
             let y = clone.blocks[i].y - clone.blocks[0].y;
             clone.blocks[i].x = -y + clone.blocks[0].x;
@@ -75,7 +68,6 @@ impl Poly{
     }
 
     pub fn rotateAntiClockwise(&self) -> Poly {
-
         let mut clone = self.clone();
 
         for i in 1..clone.length() {
@@ -90,7 +82,7 @@ impl Poly{
     /**
      * Creates a hex string colour for a given poly. The colour will be
      * consistent as the poly moves and rotates.
-     * @param poly 
+     * @param poly
      */
     pub fn create_poly_color() -> String {
         "#ffffff".to_string()
@@ -134,23 +126,23 @@ impl Poly{
     }
 
     /*
-    getHashCode(): number {
+        getHashCode(): number {
 
-        if (this._hashCode === null) {
+            if (this._hashCode === null) {
 
-            var hashCode = 0;
-            var hashStr = this.getHash();
-            if (hashStr.length == 0) return hashCode;
-            for (var i = 0; i < hashStr.length; i++) {
-                var char = hashStr.charCodeAt(i);
-                hashCode = ((hashCode << 5) - hashCode) + char;
-                hashCode = hashCode & hashCode; // Convert to 32bit integer
+                var hashCode = 0;
+                var hashStr = this.getHash();
+                if (hashStr.length == 0) return hashCode;
+                for (var i = 0; i < hashStr.length; i++) {
+                    var char = hashStr.charCodeAt(i);
+                    hashCode = ((hashCode << 5) - hashCode) + char;
+                    hashCode = hashCode & hashCode; // Convert to 32bit integer
+                }
+                this._hashCode = hashCode;
             }
-            this._hashCode = hashCode;
+            return this._hashCode;
         }
-        return this._hashCode;
-    }
-*/
+    */
 }
 
 impl PartialEq for Poly {
@@ -158,8 +150,7 @@ impl PartialEq for Poly {
         self.getHash() == other.getHash()
     }
 }
-impl Eq for Poly {
-}
+impl Eq for Poly {}
 impl Hash for Poly {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
         self.getHash().hash(state);

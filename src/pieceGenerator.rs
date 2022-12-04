@@ -213,7 +213,6 @@ fn expandPolys(startPolys: Vec<Poly>, mut hashes: &mut HashSet<String>) -> Vec<P
     res
 }
 
-
 #[cfg(test)]
 mod tests {
 
@@ -238,7 +237,7 @@ mod tests {
     fn poly_7_test() {
         assert_eq!(createPolyominoes(7).len(), 196);
     }
-    
+
     #[test]
     fn poly_8_test() {
         assert_eq!(createPolyominoes(8).len(), 704);
