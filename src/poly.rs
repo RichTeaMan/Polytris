@@ -17,8 +17,6 @@ impl Block {
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct Poly {
     pub blocks: Vec<Block>,
-
-    _hashCode: i32,
 }
 
 impl Poly {
@@ -54,7 +52,7 @@ impl Poly {
     }
     */
 
-    pub fn rotateClockwise(&self) -> Poly {
+    pub fn rotate_clockwise(&self) -> Poly {
         let mut clone = self.clone();
 
         // rotate about the first block
@@ -67,7 +65,7 @@ impl Poly {
         clone
     }
 
-    pub fn rotateAntiClockwise(&self) -> Poly {
+    pub fn rotate_anti_clockwise(&self) -> Poly {
         let mut clone = self.clone();
 
         for i in 1..clone.length() {
@@ -84,9 +82,6 @@ impl Poly {
      * consistent as the poly moves and rotates.
      * @param poly
      */
-    pub fn create_poly_color() -> String {
-        "#ffffff".to_string()
-    }
     /*
     pub fn createPolyColor() -> string {
         var hashCode = this.getHashCode();
@@ -115,7 +110,7 @@ impl Poly {
     }
     */
 
-    pub fn getHash(&self) -> String {
+    pub fn get_hash(&self) -> String {
         let mut block_hashes = Vec::new();
         for block in &self.blocks {
             let block_hash = serde_json::to_string(&block).unwrap();
@@ -147,12 +142,12 @@ impl Poly {
 
 impl PartialEq for Poly {
     fn eq(&self, other: &Self) -> bool {
-        self.getHash() == other.getHash()
+        self.get_hash() == other.get_hash()
     }
 }
 impl Eq for Poly {}
 impl Hash for Poly {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.getHash().hash(state);
+        self.get_hash().hash(state);
     }
 }
