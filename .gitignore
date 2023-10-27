@@ -1,8 +1,4 @@
 .vs/
 node_modules/
 
-
-
-# Added by cargo
-
-/target
+piece-generator/target

@@ -204,12 +204,13 @@ fn expand_polys(start_polys: Vec<Poly>, hashes: &mut HashSet<String>) -> Vec<Pol
         }
     }
 
-    let mut res = Vec::new();
-    for poly in result_polys {
-        // eurgh. must be a better way
-        res.push(poly.clone());
-    }
-    res
+    Vec::from_iter(result_polys)
+    //let mut res = Vec::new();
+    //for poly in result_polys {
+    //    // eurgh. must be a better way
+    //    res.push(poly.clone());
+    //}
+    //res
 }
 
 #[cfg(test)]
