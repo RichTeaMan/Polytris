@@ -1,10 +1,15 @@
-use std::{fs::File, io::BufWriter};
+use std::{
+    fs::File,
+    io::{self, BufWriter, Write},
+};
+
+use poly::Poly;
 
 mod piece_generator;
 mod poly;
 
 fn main() {
-    let size = 16;
+    let size = 12;
     println!("Piece generator, generating {size} pieces.");
 
     let pieces = piece_generator::create_polyominoes(size);
@@ -30,5 +35,46 @@ fn main() {
         panic!("Cannot create file.");
     }
 
+    let bin_file_res = File::create(format!("poly-{size}.bin"));
+
+    println!("Writing binary...");
+    if let Ok(file) = bin_file_res {
+        let writer = BufWriter::new(file);
+        write_binary(writer, &pieces);
+    } else {
+        panic!("Cannot create file.");
+    }
+
     println!("Generation complete.");
+}
+
+fn write_binary<W>(mut writer: W, polyominoes: &Vec<Poly>) -> io::Result<()>
+where
+    W: io::Write,
+{
+    if polyominoes.is_empty() {
+        panic!("Polyominoes cannot be empty.");
+    }
+    let poly_size = polyominoes.first().unwrap().length();
+
+    let header = [poly_size as u8, b'\n', polyominoes.len() as u8, b'\n'];
+
+    writer.write_all(&header)?;
+
+    for poly in polyominoes {
+        if poly.length() != poly_size {
+            panic!("Polyomino of irregular length.");
+        }
+        let poly_line_vec = poly
+            .blocks
+            .iter()
+            .map(|b| vec![b.x as u8, b.y as u8])
+            .flatten()
+            .collect::<Vec<u8>>();
+        let poly_line = poly_line_vec.as_slice();
+        writer.write_all(&poly_line)?;
+        writer.write_all(b"\n")?;
+    }
+
+    Ok(())
 }
