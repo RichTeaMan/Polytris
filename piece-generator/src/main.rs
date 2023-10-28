@@ -8,8 +8,22 @@ use poly::Poly;
 mod piece_generator;
 mod poly;
 
+use clap::Parser;
+
+/// Polyominoes generator.
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    /// n value of polyominoes to generate.
+    #[arg(short, long, default_value_t = 4)]
+    n: u8,
+}
+
 fn main() {
-    let size = 12;
+
+    let args = Args::parse();
+
+    let size: usize = args.n.into();
     println!("Piece generator, generating {size} pieces.");
 
     let pieces = piece_generator::create_polyominoes(size);
