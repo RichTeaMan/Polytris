@@ -10,11 +10,14 @@ pub fn create_polyominoes(poly_size: usize) -> Vec<Poly> {
     polys.push(start_poly);
 
     for _ in 2..=poly_size {
-        let mut hashes = HashSet::new();
-        hashes.insert(polys.iter().map(|p| p.get_hash()).collect());
-        polys = expand_polys(polys, &mut hashes);
+        polys = create_polyominoes_from_previous(polys);
     }
     polys
+}
+
+pub fn create_polyominoes_from_previous(polys: Vec<Poly>) -> Vec<Poly> {
+    let mut hashes = HashSet::new();
+    expand_polys(polys, &mut hashes)
 }
 
 fn attempt_to_grow_poly(

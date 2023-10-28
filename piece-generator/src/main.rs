@@ -1,5 +1,5 @@
 use std::{
-    fs::File,
+    fs::{File, self},
     io::{self, BufWriter, Write},
 };
 
@@ -20,43 +20,42 @@ struct Args {
 }
 
 fn main() {
-
     let args = Args::parse();
 
     let size: usize = args.n.into();
     println!("Piece generator, generating {size} pieces.");
 
-    let pieces = piece_generator::create_polyominoes(size);
-    println!("Created {l} pieces.", l = pieces.len());
+    let out_dir = "polyominoes";
 
-    let file_res = File::create(format!("poly-{size}.json"));
+    fs::create_dir_all(out_dir).unwrap();
 
-    println!("Writing JSON...");
-    if let Ok(file) = file_res {
-        let writer = BufWriter::new(file);
-        serde_json::to_writer(writer, &pieces);
-    } else {
-        panic!("Cannot create file.");
-    }
+    let mut previous_generation = piece_generator::create_polyominoes(2);
 
-    let pp_file_res = File::create(format!("pp_poly-{size}.json"));
+    for i in 3..=size {
+        println!("Generating with {i} blocks...");
+        let pieces = piece_generator::create_polyominoes_from_previous(previous_generation);
+        println!("Created {l} pieces with {n} blocks.", l = pieces.len(), n = i);
 
-    println!("Writing pretty JSON...");
-    if let Ok(file) = pp_file_res {
-        let writer = BufWriter::new(file);
-        serde_json::to_writer_pretty(writer, &pieces);
-    } else {
-        panic!("Cannot create file.");
-    }
+        let file_res = File::create(format!("{out_dir}/poly-{i}.json"));
 
-    let bin_file_res = File::create(format!("poly-{size}.bin"));
+        println!("Writing JSON...");
+        if let Ok(file) = file_res {
+            let writer = BufWriter::new(file);
+            serde_json::to_writer(writer, &pieces);
+        } else {
+            panic!("Cannot create file.");
+        }
 
-    println!("Writing binary...");
-    if let Ok(file) = bin_file_res {
-        let writer = BufWriter::new(file);
-        write_binary(writer, &pieces);
-    } else {
-        panic!("Cannot create file.");
+        let bin_file_res = File::create(format!("{out_dir}/poly-{i}.bin"));
+
+        println!("Writing binary...");
+        if let Ok(file) = bin_file_res {
+            let writer = BufWriter::new(file);
+            write_binary(writer, &pieces);
+        } else {
+            panic!("Cannot create file.");
+        }
+        previous_generation = pieces;
     }
 
     println!("Generation complete.");
