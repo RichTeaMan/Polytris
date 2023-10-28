@@ -1,6 +1,6 @@
 use std::{
-    fs::{File, self},
-    io::{self, BufWriter, Write},
+    fs::{self, File},
+    io::{self, BufWriter},
 };
 
 use poly::Poly;
@@ -22,7 +22,12 @@ struct Args {
 fn main() {
     let args = Args::parse();
 
-    let size: usize = args.n.into();
+    if let Err(e) = generate_polyominoes(args.n as usize) {
+        panic!("An error occurred: {}", e);
+    }
+}
+
+fn generate_polyominoes(size: usize) -> io::Result<()> {
     println!("Piece generator, generating {size} pieces.");
 
     let out_dir = "polyominoes";
@@ -34,31 +39,28 @@ fn main() {
     for i in 3..=size {
         println!("Generating with {i} blocks...");
         let pieces = piece_generator::create_polyominoes_from_previous(previous_generation);
-        println!("Created {l} pieces with {n} blocks.", l = pieces.len(), n = i);
+        println!(
+            "Created {l} pieces with {n} blocks.",
+            l = pieces.len(),
+            n = i
+        );
 
-        let file_res = File::create(format!("{out_dir}/poly-{i}.json"));
+        let file = File::create(format!("{out_dir}/poly-{i}.json"))?;
 
         println!("Writing JSON...");
-        if let Ok(file) = file_res {
-            let writer = BufWriter::new(file);
-            serde_json::to_writer(writer, &pieces);
-        } else {
-            panic!("Cannot create file.");
-        }
+        let writer = BufWriter::new(file);
+        serde_json::to_writer(writer, &pieces)?;
 
-        let bin_file_res = File::create(format!("{out_dir}/poly-{i}.bin"));
+        let bin_file = File::create(format!("{out_dir}/poly-{i}.bin"))?;
 
         println!("Writing binary...");
-        if let Ok(file) = bin_file_res {
-            let writer = BufWriter::new(file);
-            write_binary(writer, &pieces);
-        } else {
-            panic!("Cannot create file.");
-        }
+        let writer = BufWriter::new(bin_file);
+        write_binary(writer, &pieces)?;
         previous_generation = pieces;
     }
 
     println!("Generation complete.");
+    Ok(())
 }
 
 fn write_binary<W>(mut writer: W, polyominoes: &Vec<Poly>) -> io::Result<()>
@@ -81,11 +83,10 @@ where
         let poly_line_vec = poly
             .blocks
             .iter()
-            .map(|b| vec![b.x as u8, b.y as u8])
-            .flatten()
+            .flat_map(|b| vec![b.x as u8, b.y as u8])
             .collect::<Vec<u8>>();
         let poly_line = poly_line_vec.as_slice();
-        writer.write_all(&poly_line)?;
+        writer.write_all(poly_line)?;
         writer.write_all(b"\n")?;
     }
 

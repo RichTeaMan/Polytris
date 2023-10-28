@@ -25,10 +25,7 @@ pub struct Poly {
 
 impl Poly {
     pub fn from_blocks(blocks: Vec<Block>) -> Poly {
-        Poly {
-            blocks,
-            ..Default::default()
-        }
+        Poly { blocks }
     }
 
     pub fn length(&self) -> usize {
@@ -44,18 +41,6 @@ impl Poly {
             let y = clone.blocks[i].y - clone.blocks[0].y;
             clone.blocks[i].x = -y + clone.blocks[0].x;
             clone.blocks[i].y = x + clone.blocks[0].y;
-        }
-        clone
-    }
-
-    pub fn rotate_anti_clockwise(&self) -> Poly {
-        let mut clone = self.clone();
-
-        for i in 1..clone.length() {
-            let x = clone.blocks[i].x - clone.blocks[0].x;
-            let y = clone.blocks[i].y - clone.blocks[0].y;
-            clone.blocks[i].x = y + clone.blocks[0].x;
-            clone.blocks[i].y = -x + clone.blocks[0].y;
         }
         clone
     }
