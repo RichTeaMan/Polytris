@@ -1,4 +1,7 @@
-use std::hash::Hash;
+use std::{
+    collections::hash_map::DefaultHasher,
+    hash::{Hash, Hasher},
+};
 
 use serde::{Deserialize, Serialize};
 
@@ -137,19 +140,22 @@ impl Poly {
         Poly::from_blocks(new_blocks)
     }
 
-    pub fn get_hash(&self) -> String {
+    pub fn get_hash(&self) -> u64 {
         let mut block_hashes = Vec::new();
+        let len = self.length() as i32;
         for block in &self.blocks {
-            let block_hash = format!("{x},{y}", x = block.x, y = block.y);
-            block_hashes.push(block_hash);
+            block_hashes.push(block.x as i32 + (block.y as i32 * len));
         }
         block_hashes.sort();
-        block_hashes.join("|")
+        let mut hasher = DefaultHasher::new();
+        block_hashes.hash(&mut hasher);
+        hasher.finish()
     }
 }
 
 impl PartialEq for Poly {
     fn eq(&self, other: &Self) -> bool {
+        // maybe this isn't exactly true - the hasher can probably get the same hash for different shapes.
         self.get_hash() == other.get_hash()
     }
 }

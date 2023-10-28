@@ -23,7 +23,7 @@ pub fn create_polyominoes_from_previous(polys: Vec<Poly>) -> Vec<Poly> {
 fn attempt_to_grow_poly(
     poly: &Poly,
     block: Block,
-    hashes: &mut HashSet<String>,
+    hashes: &mut HashSet<u64>,
     mut result_polys: HashSet<Poly>,
 ) -> HashSet<Poly> {
     // check if block already exists in poly
@@ -65,7 +65,7 @@ fn attempt_to_grow_poly(
     result_polys
 }
 
-fn expand_polys(start_polys: Vec<Poly>, hashes: &mut HashSet<String>) -> Vec<Poly> {
+fn expand_polys(start_polys: Vec<Poly>, hashes: &mut HashSet<u64>) -> Vec<Poly> {
     let mut result_polys = HashSet::new();
 
     // iterate through all polys
